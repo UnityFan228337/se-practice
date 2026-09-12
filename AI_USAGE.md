@@ -9,13 +9,13 @@ including anything an AI tool produced.
 | Rocket (rocket.new) | free | Part 2 — generated app from a prompt | `week-01/ai/` |
 | | | | |
 
-**Part 1 (`week-01/manual/`) was written without any AI assistance:** yes / no
+**Part 1 (`week-01/manual/`) was written without any AI assistance:** yes
 <!-- If "no", say exactly what was assisted. An honest "no" costs far less than an undisclosed "yes". -->
 
-**Everything I submitted, I can explain and defend in class:** yes / no
+**Everything I submitted, I can explain and defend in class:** yes
 
 **Anything I accepted from the AI without fully understanding it:**
 <!-- Name the file and the part. This is a normal, expected answer in Week 1. -->
 
-Signed: <your name>
-Date:
+Signed: Мальцев Ярослав
+Date: 12.09
