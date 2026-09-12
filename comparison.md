@@ -1,9 +1,12 @@
 # Week 01 — Manual vs AI: Comparison
 
-**Name:**
-**Group:**
-**Date:**
+**Name:** Мальцев Ярослав
+**Group:** [CSCI-2208] Software Engineering - Fall 2026 16:00-19:00
+**Date:** 12.09
 
+---
+I cant download.<br/>
+LINK: https://marksanalyzer-lqt570.public.builtwithrocket.new/
 ---
 
 ## 1. Facts
@@ -25,10 +28,10 @@
 
 | Case | Input | Manual output | Rocket output | Spec says | Match? |
 | --- | --- | --- | --- | --- | --- |
-| A | `85, 23, 45, 90, 92` | | | avg 67.00 · high 92 · low 23 · pass 60.0% | |
-| B | `88, 47, -5, 101, abc, 73, 50, , 100` | | | avg 71.60 · high 100 · low 47 · pass 80.0% | |
-| C | `10, 20, 30` | | | avg 20.00 · high 30 · low 10 · pass 0.0% | |
-| D | `abc, , xyz` | | | clear message, no crash | |
+| A | `85, 23, 45, 90, 92` | | | avg 67.00 · high 92 · low 23 · pass 60.0% | yes |
+| B | `88, 47, -5, 101, abc, 73, 50, , 100` | | | avg 71.60 · high 100 · low 47 · pass 80.0% | yes |
+| C | `10, 20, 30` | | | avg 20.00 · high 30 · low 10 · pass 0.0% | yes |
+| D | `abc, , xyz` | | | clear message, no crash | yes |
 
 ## 3. What the AI added that I never asked for
 
@@ -43,12 +46,13 @@
 
 <!-- Be concrete: input, expected, actual. -->
 
-- Cannot work with many lines
--
+- Dont get a point to "one line - one student"
 
 ## 5. The defect I asked Rocket to fix
 
-**Prompt I used:**
+**Prompt I used:** On the next line is other student, and have to be his own statistics
+
+
 
 **Result:** (fixed)
 
