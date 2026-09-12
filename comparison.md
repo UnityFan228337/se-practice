@@ -10,16 +10,16 @@
 
 | | Manual (Part 1) | Rocket (Part 2) |
 | --- | --- | --- |
-| Language / stack used | | |
-| Time to first version that ran | | |
-| Time to all 4 test cases passing | | |
-| Number of attempts / prompts needed | | |
-| Lines of code you actually wrote | | |
-| Did it handle invalid marks (case B)? | | |
-| Did it handle an empty list (case D)? | | |
-| Did it use the ≥ 50 pass threshold? | | |
-| Output format matches the spec? | | |
-| Can you explain every line of it? | | |
+| Language / stack used | Python | Next.js and TypeScript |
+| Time to first version that ran | 10 | 5 |
+| Time to all 4 test cases passing | 12 | 5 |
+| Number of attempts / prompts needed | 3 | 1 |
+| Lines of code you actually wrote | 31 | 0 |
+| Did it handle invalid marks (case B)? | yes | yes |
+| Did it handle an empty list (case D)? | yes | yes |
+| Did it use the ≥ 50 pass threshold? | yes | yes |
+| Output format matches the spec? | yes | yes |
+| Can you explain every line of it? | yes  | yes |
 
 ## 2. Test results
 
@@ -34,25 +34,27 @@
 
 <!-- Tech stack, UI, extra features, a pass threshold it invented, styling, etc. -->
 
--
--
+- Build an app on Node.js
+- UI
+- Button "Copy"
+- Button "Reset"
 
 ## 4. What the AI got wrong or silently skipped
 
 <!-- Be concrete: input, expected, actual. -->
 
--
+- Cannot work with many lines
 -
 
 ## 5. The defect I asked Rocket to fix
 
 **Prompt I used:**
 
-**Result:** (fixed / partly fixed / broke something else)
+**Result:** (fixed)
 
 **What this tells me:**
 
----
+--- How accuracy prompt, that accuracy result
 
 ## 6. Reflection (200–300 words)
 
@@ -64,3 +66,19 @@ Answer all four, in your own words:
 4. What must a human engineer still be responsible for after this experiment?
 
 <!-- Write your reflection below this line -->
+
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+1. The AI genuinely speed up the initial project setup and frontend layout creation. Instead of spending time configuring a UI framework, or styling form inputs and card layouts, rocket.new built a functional web interface in under 5 minutes. It instantly handled  basic input that would have taken much longer to create manually.
+
+2. However, the AI cost time by adding unrequested features and missing exact formatting constraints. Rather than writing a lean script, it generated a full web application packed with extra statistics—like median and standard deviation and interactive widgets. It also dont get a point about one line - one student, it requires me an extra prompt to fix it.
+
+3. I would be willing to put my name on the manual Python solution. Because I wrote every line myself, I understand its execution flow, input validation. The Rocket artifact looks strange, but submitting an entire generated web stack introduces unnecessary complexity, unverified dependencies, and code I did not write from scratch.
+
+4. Human engineer remains responsible for system requirements, edge-case verification, and overall code integrity. While AI can build solutions quickly, only a human developer can ensure strict specification compliance, audit logic for silent errors, and take full responsibility for what gets deployed.
