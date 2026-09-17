@@ -62,7 +62,7 @@ threshold, a rounding rule, an input method, an invented feature all count.
 **Is the function named `analyze_marks` with the required signature?** yes
 
 **First impression before testing** (one sentence — you will compare this with section 6 later):
-
+Not bad, a lot of code, difficult architecture for that small application.
 ---
 
 ## 3. Prompt B — structured context
@@ -70,18 +70,22 @@ threshold, a rounding rule, an input method, an invented feature all count.
 **Prompt sent** (paste it in full, including any substitutions):
 
 ```
+You are a Python developer. Implement analyze_marks(marks, pass_mark=50). Return
+average, highest, lowest, and pass_rate in a dictionary. Accept marks from 0 to 100;
+raise ValueError for an empty list, non-numeric values, or out-of-range values. Use
+no external libraries. Return code plus a short explanation.
 
 ```
 
 **What B fixed compared to A:**
 
-1.
-2.
+1. Dont make big and difficult architecture
+2. Dont fake up a new subjects, he calculate it for one
 
 **What B still leaves open:**
 
-1.
-2.
+1. Dont make an input
+2. 
 
 ---
 
@@ -90,23 +94,35 @@ threshold, a rounding rule, an input method, an invented feature all count.
 **What I appended to Prompt B:**
 
 ```
+Example: analyze_marks([40, 60, 80], 50) → average 60, highest 80, lowest 40,
+pass_rate 66.67. Include tests for: one mark, decimals, custom pass_mark, empty list,
+text value, and marks below 0 or above 100. State any remaining assumptions before
+the code.
 
 ```
 
 **Tests the AI wrote for itself** — how many, and which situations do they cover?
+7
+1. 75
+2. 45.5 60.5 84
+3. 40 60 80 pass_mark = 70
+4. empty
+5. 50 "eighty" 90
+6. 50 -10 80
+7. 50 105 80 
 
 | Situation | Covered by the AI's tests? |
 | --- | --- |
-| one mark | |
-| decimals | |
-| custom pass_mark | |
-| empty list | |
-| text value | |
-| below 0 / above 100 | |
+| one mark | yes |
+| decimals | yes |
+| custom pass_mark | yes |
+| empty list | yes |
+| text value | yes |
+| below 0 / above 100 | yes |
 
-**Do the AI's own tests pass against the AI's own code?** yes / no
+**Do the AI's own tests pass against the AI's own code?** yes
 
-**Do they agree with the harness in section 6?** yes / no — if no, where do they disagree:
+**Do they agree with the harness in section 6?** yes
 
 **Assumptions C stated explicitly before the code:**
 
