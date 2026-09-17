@@ -28,7 +28,7 @@ be checked:
 
 **Confirmations:**
 
-- Each prompt was sent in a **fresh chat**: yes / no
+- Each prompt was sent in a **fresh chat**: yes
 - No follow-up questions were asked before Part 7: yes / no
 - Every output was saved **before** any editing: yes / no
 
@@ -39,23 +39,27 @@ be checked:
 **Prompt sent** (should be exactly one sentence):
 
 ```
+Write Python code to analyze student marks.
 
 ```
 
 **Assumptions the AI made that I never gave it** — list them, one per line. A data format, a pass
 threshold, a rounding rule, an input method, an invented feature all count.
 
-1.
-2.
-3.
+1. Using numpy library
+2. Using pandas library
+3. I dont give a student data
+4. Gemini make table of subjects, and made fictional subjects
+
 
 **Questions it should have asked and did not:**
 
-1.
-2.
+1. Data
+2. Input format
+3. May he use a libraries
+4. Is it only for one subjects or for many
 
-**Is the function named `analyze_marks` with the required signature?** yes / no — if no, what is it
-called:
+**Is the function named `analyze_marks` with the required signature?** yes
 
 **First impression before testing** (one sentence — you will compare this with section 6 later):
 
