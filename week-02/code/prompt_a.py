@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def analyze_student_marks(data):
+def analyze_marks(data):
     """Analyzes student marks data and generates class summary metrics.
 
     Parameters:
@@ -39,32 +39,7 @@ def analyze_student_marks(data):
     return df
 
 
-def generate_class_insights(df, subject_cols=["Math", "Science", "English"]):
-    """Prints overall class performance statistics."""
-    print("=" * 45)
-    print("            CLASS OVERVIEW SUMMARY            ")
-    print("=" * 45)
 
-    print(f"Total Students Analyzed : {len(df)}")
-    print(f"Pass Percentage         : {(df['Status'] == 'Pass').mean() * 100:.1f}%")
-    print(
-        f"Top Performer           : {df.loc[df['Total Marks'].idxmax(), 'Name']} ({df['Total Marks'].max()} pts)"
-    )
-
-    print("\n" + "-" * 45)
-    print("Subject-Wise Performance Metrics:")
-    print("-" * 45)
-
-    subject_stats = pd.DataFrame(
-        {
-            "Mean": df[subject_cols].mean().round(2),
-            "Max": df[subject_cols].max(),
-            "Min": df[subject_cols].min(),
-            "Std Dev": df[subject_cols].std().round(2),
-        }
-    )
-    print(subject_stats)
-    print("=" * 45)
 
 
 # Sample Data
@@ -76,24 +51,8 @@ student_data = {
 }
 
 # Run Analysis
-analyzed_df = analyze_student_marks(student_data)
+analyzed_df = analyze_marks(student_data)
 
-# Display Individual Results
-print("\nIndividual Student Results:")
-print(
-    analyzed_df[
-        [
-            "Name",
-            "Math",
-            "Science",
-            "English",
-            "Total Marks",
-            "Average Marks",
-            "Grade",
-            "Status",
-        ]
-    ]
-)
+
 
 # Display Summary Insights
-generate_class_insights(analyzed_df)
