@@ -97,12 +97,4 @@ def test_out_of_range_above_hundred_raises_value_error():
         analyze_marks([50, 105, 80])
         print("Test 'test_out_of_range_above_hundred_raises_value_error' passed.")
 
-# print(analyze_marks([40, 60, 80], pass_mark=50))
-# print(analyze_marks([75]))
-# print(analyze_marks([45.5, 60.5, 84.0]))
-# print(analyze_marks([40, 60, 80], pass_mark=70))
-# print(analyze_marks([]))
-# print(analyze_marks([50, "eighty", 90]))
-# print(analyze_marks([50, -10, 80]))
-# print(analyze_marks([50, 105, 80]))
 
