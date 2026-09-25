@@ -18,9 +18,14 @@ rectangle "Smart Campus study room booking" {
   usecase "Send confirmation"      as UC06
 }
 
-' TODO: replace the associations below with the ones you can justify.
-' TODO: think about UC05 and UC06 before you connect an actor to them.
-
 Student --> UC01
+Student --> UC02
+Student --> UC03
+
+Administrator --> UC04
+Administrator --> UC05
+
+UC02 ..> UC06 : <<include>>
+UC03 ..> UC06 : <<include>>
 
 @enduml
