@@ -1,64 +1,32 @@
-# week-04/submission.yml — your declaration for this lab.
-#
-# Facts only. Every explanation goes in lab-report.md; nothing here repeats prose.
-# Fill every value. Check it before you push:
-#
-#     python tests/validate_submission.py
-#
-# The validator checks shape, never quality. A green run is the floor, not the grade.
-# If you cannot run Python, fill the file by hand against the comments — a malformed
-# file costs you nothing if the content is there.
+# Approved stories — Smart Campus study room booking
 
-schema: 1
-week: "04"
+> **Replace this file's stories with your own Week 03 stories, as revised after review**
+> (`week-03/requirements/user-stories.md`), keeping their IDs. If you did not complete Week 03, or
+> your set was rejected in review, keep the reference set below and say so in `lab-report.md` §1.
+> Either way, the IDs here are the ones your consistency table (§7) must use.
 
-student:
-  name: Ярослав
-  student_id:   25b030214       # as in KBTU records, e.g. 24B031016
-  github:  UnityFan228337            # your GitHub username, the one that owns the repo
+**Source of this set:** week-03 stories, revised
 
-assistant:
-  tool: Gemini               # e.g. ChatGPT, Claude, Gemini, DeepSeek, Grok
-  model: Gemini 3.6 Flash              # the exact model name with its version. "ChatGPT" is not a model name.
+## Scenario (from the Lesson 04 practice deck, slide 7)
 
-counts:
-  behaviour_diagram:   # sequence | activity | both   (must match the files in models/)
-  stories_source:      # week-03 | reference
-  use_cases:           # how many use cases your REVISED use-case diagram has
-  change_log_rows:     # rows in lab-report.md §8 (the task asks for 3 or more)
+Students view room availability, book a room, and cancel their own bookings. Administrators block
+or unblock rooms and review usage.
 
-checker:
-  # Numbers from YOUR last run of: python tests/check_models.py
-  # They must add up to the number of checks it runs. Report them as they came out.
-  # A FAIL you report and explain in lab-report.md costs you nothing. A hidden one costs the criterion.
-  pass:
-  fail:
-  error:
-  commit:              # the commit you ran the checker at: git rev-parse --short HEAD
-                       # (normally the commit just before you commit this file — that is fine)
-  kept_fails: []       # the check IDs that still FAIL and are explained in lab-report.md §9, e.g. [CL5]
+- **R1** Future start, with duration greater than 0 and at most 2 hours.
+- **R2** Active bookings for the same room cannot overlap.
+- **R3** A blocked room cannot accept a new booking.
+- **R4** A successful booking produces a confirmation.
 
-assumptions:
-  # The scenario does not settle these two. Decide, declare, and defend the decision in lab-report.md §4.3.
-  # Either answer is acceptable. Not deciding is not.
-  # (Week 03's third question, exactly two hours, is settled by R1 this week: "at most 2 hours" — allowed.)
-  overlap_touching_bookings:   # allowed | not-allowed   (a booking ending 14:00 and one starting 14:00)
-  blocking_a_booked_room:      # keep-bookings | cancel-bookings   (what R3 does to bookings that already exist)
+## Reference set
 
-traceability:
-  # Empty lists are allowed — if you claim full coverage, the checker and I will test that claim.
-  use_cases_not_traced: []     # use cases in your diagram with no approved story, e.g. [Login]
-  rules_not_shown: []          # rules R1-R4 not visible in your behaviour diagram, e.g. [R3]
+| ID | Story | Rules |
+| --- | --- | --- |
+| US-01 | As a Student, I want to view room availability for specific time slots, so that I can find an open study space for my schedule. | R1, R2, R3, R4 |
+| US-02 | As a Student, I want to book an available study room for a future time slot, so that I have a guaranteed place to study. | R1, R2, R3, R4 |
+| US-03 | As a Student, I want to cancel my existing room booking, so that the room becomes available for other students if I no longer need it. | R1, R2, R3, R4 |
+| US-04 | As an Administrator, I want to block a study room from being booked, so that students cannot reserve it. | R1, R2, R3, R4 |
+| US-05 | As an Administrator, I want to unblock a previously blocked room, so that it becomes available for student reservations again. | R1, R2, R3, R4 |
+| US-06 | As an Administrator, I want to review room usage metrics over selected time periods, so that I can understand peak hours and optimize library room allocation. | R1, R2, R3, R4 |
 
-review_findings:
-  # Three or more. One line each, and each one names the diagram element it is about.
-  # Worthless: "the AI made mistakes in the class diagram".
-  # Worth everything: "Room *-- Booking was a composition; a booking is not part of a room — plain association 1 / 0..*".
-  -
-  -
-  -
-
-honesty:
-  originals_unedited:  yes               # yes | no   — models/original/ holds the AI's first replies as returned
-  can_explain_everything_submitted: yes  # yes | no   — "no" is an accepted answer, name the part in lab-report.md
-  ai_usage_disclosed:     yes            # yes | no   — AI_USAGE.md is required every week
+**Out of scope** (do not model): payments, equipment in rooms, recurring bookings, waiting lists,
+notifications other than the booking confirmation, user registration.
