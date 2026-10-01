@@ -13,13 +13,13 @@ schema: 1
 week: "04"
 
 student:
-  name:
-  student_id:          # as in KBTU records, e.g. 24B031016
-  github:              # your GitHub username, the one that owns the repo
+  name: Ярослав
+  student_id:   25b030214       # as in KBTU records, e.g. 24B031016
+  github:  UnityFan228337            # your GitHub username, the one that owns the repo
 
 assistant:
-  tool:                # e.g. ChatGPT, Claude, Gemini, DeepSeek, Grok
-  model:               # the exact model name with its version. "ChatGPT" is not a model name.
+  tool: Gemini               # e.g. ChatGPT, Claude, Gemini, DeepSeek, Grok
+  model: Gemini 3.6 Flash              # the exact model name with its version. "ChatGPT" is not a model name.
 
 counts:
   behaviour_diagram:   # sequence | activity | both   (must match the files in models/)
@@ -59,6 +59,6 @@ review_findings:
   -
 
 honesty:
-  originals_unedited:                 # yes | no   — models/original/ holds the AI's first replies as returned
-  can_explain_everything_submitted:   # yes | no   — "no" is an accepted answer, name the part in lab-report.md
-  ai_usage_disclosed:                 # yes | no   — AI_USAGE.md is required every week
+  originals_unedited:  yes               # yes | no   — models/original/ holds the AI's first replies as returned
+  can_explain_everything_submitted: yes  # yes | no   — "no" is an accepted answer, name the part in lab-report.md
+  ai_usage_disclosed:     yes            # yes | no   — AI_USAGE.md is required every week

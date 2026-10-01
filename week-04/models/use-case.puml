@@ -1,0 +1,44 @@
+i think all is correct
+
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Student" as student
+actor "Administrator" as admin
+
+rectangle "Smart Campus System" {
+  
+  package "Room Availability & Booking" {
+    usecase "View Room Availability" as UC_View
+    usecase "Book Study Room" as UC_Book
+    usecase "Cancel Room Booking" as UC_Cancel
+  }
+
+  package "Room Management" {
+    usecase "Block Study Room" as UC_Block
+    usecase "Unblock Study Room" as UC_Unblock
+    usecase "Review Room Usage Metrics" as UC_Metrics
+  }
+
+  package "Notifications" {
+    usecase "Send Automated Confirmation" as UC_Notify
+  }
+
+}
+
+' Student Associations
+student -- UC_View
+student -- UC_Book
+student -- UC_Cancel
+
+' Administrator Associations
+admin -- UC_Block
+admin -- UC_Unblock
+admin -- UC_Metrics
+
+' Include Relationships (Mandatory System Behaviors)
+UC_Book ..> UC_Notify : <<include>>
+UC_Cancel ..> UC_Notify : <<include>>
+
+@enduml
