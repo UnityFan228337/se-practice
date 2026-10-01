@@ -10,39 +10,39 @@ activate Service
 
 ' Step 1: Rule Validation
 note over Service
-  **Validation Checks:**
-  - **R1:** Duration > 0 and <= 2 hours & in future
-  - **US-02:** Slot <= 14 days in advance
+**Validation Checks:**
+- **R1:** Duration > 0 and <= 2 hours & in future
+- **US-02:** Slot <= 14 days in advance
 end note
 
 alt Invalid TimeSlot (R1 / US-02 violation)
-    Service --> Student : return BookingError("Invalid duration or slot beyond 14 days")
+Service --> Student : return BookingError("Invalid duration or slot beyond 14 days")
 else Valid TimeSlot
-    ' Step 2: Check Availability & Room Status (R2 & R3)
-    Service -> Repo : isRoomAvailable(roomId, slot)
-    activate Repo
-    Repo --> Service : status (Available / Overlapped / Blocked)
-    deactivate Repo
+' Step 2: Check Availability & Room Status (R2 & R3)
+Service -> Repo : isRoomAvailable(roomId, slot)
+activate Repo
+Repo --> Service : status (Available / Overlapped / Blocked)
+deactivate Repo
 
-    alt Room Available (R2 & R3 Passed)
-        ' Successful Reservation Path
-        Service -> Repo : saveBooking(booking)
-        activate Repo
-        Repo --> Service : confirmationRef
-        deactivate Repo
+alt Room Available (R2 & R3 Passed)
+' Successful Reservation Path
+Service -> Repo : saveBooking(booking)
+activate Repo
+Repo --> Service : confirmationRef
+deactivate Repo
 
-        ' Rule R4: Automated Confirmation
-        Service -> Notify : sendBookingConfirmation(studentId, confirmationRef)
-        activate Notify
-        Notify --> Service : notificationSent
-        deactivate Notify
+' Rule R4: Automated Confirmation
+Service -> Notify : sendBookingConfirmation(studentId, confirmationRef)
+activate Notify
+Notify --> Service : notificationSent
+deactivate Notify
 
-        Service --> Student : return BookingConfirmation(status=CONFIRMED, ref)
+Service --> Student : return BookingConfirmation(status=CONFIRMED, ref)
 
-    else Room Unavailable or Blocked (R2 / R3 Violation)
-        ' Alternative Path: Room is Overlapped (R2) or Blocked (R3)
-        Service --> Student : return BookingError("Room unavailable or currently blocked")
-    end
+else Room Unavailable or Blocked (R2 / R3 Violation)
+' Alternative Path: Room is Overlapped (R2) or Blocked (R3)
+Service --> Student : return BookingError("Room unavailable or currently blocked")
+end
 end
 
 deactivate Service
