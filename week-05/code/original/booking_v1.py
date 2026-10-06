@@ -3,7 +3,6 @@ def can_book(start, end, now, blocked, existing):
 
     Times are integer minutes after midnight on one date. Intervals include
     the start and exclude the end, so (600, 660) and (660, 720) only touch.
-    The list `existing` is only read, never modified (AC5).
     """
     # AC1: valid interval inside the day, and in the future
     if not (0 <= start < end <= 1440):
