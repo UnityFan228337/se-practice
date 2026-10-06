@@ -13,17 +13,17 @@ schema: 1
 week: "05"
 
 student:
-  name:
-  student_id:          # as in KBTU records, e.g. 00X000000
-  github:              # your GitHub username, the one that owns the repo
+  name:  Ярослав
+  student_id:    25B030214      # as in KBTU records, e.g. 00X000000
+  github:        UnityFan228337      # your GitHub username, the one that owns the repo
 
 assistant:
   tool:                # e.g. ChatGPT, Claude, Gemini, DeepSeek, Grok
   model:               # the exact model name with its version. "ChatGPT" is not a model name.
 
 language:
-  name:                # python | javascript | typescript | java | csharp | go | cpp | <other>
-  path:                # A (Python, the shipped checker runs your code) | B (any other language)
+  name:  python              # python | javascript | typescript | java | csharp | go | cpp | <other>
+  path:         A       # A (Python, the shipped checker runs your code) | B (any other language)
 
 counts:
   tests:               # how many tests your suite runs — Path A: the N in "Ran N tests"
@@ -52,7 +52,7 @@ carried:
   # What you declared in week-04/submission.yml under overlap_touching_bookings.
   # AC4 settles it this week: touching endpoints are allowed. If you said not-allowed, that is a
   # finding for lab-report.md §1 — not a penalty.
-  week04_touching:     # allowed | not-allowed | not-submitted
+  week04_touching:  allowed   # allowed | not-allowed | not-submitted
 
 review_findings:
   # Three or more. One line each, and each one names what it is about: an AC, a check ID,
@@ -64,6 +64,6 @@ review_findings:
   -
 
 honesty:
-  v1_unedited:                       # yes | no   code/original/ holds the assistant's first answer, untouched
-  can_explain_overlap_without_ai:    # yes | no   you will be asked in class
-  ai_usage_disclosed:                # yes | no   AI_USAGE.md is complete
+  v1_unedited:                  yes     # yes | no   code/original/ holds the assistant's first answer, untouched
+  can_explain_overlap_without_ai:   yes  # yes | no   you will be asked in class
+  ai_usage_disclosed:      yes          # yes | no   AI_USAGE.md is complete
