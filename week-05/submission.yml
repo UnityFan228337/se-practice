@@ -26,26 +26,26 @@ language:
   path:         A       # A (Python, the shipped checker runs your code) | B (any other language)
 
 counts:
-  tests:               # how many tests your suite runs — Path A: the N in "Ran N tests"
-  v1_changed:          # yes | no   is your final booking file different from code/original/booking_v1 ?
-  change_log_rows:     # rows in lab-report.md section 7 (always at least 1)
+  tests:        33       # how many tests your suite runs — Path A: the N in "Ran N tests"
+  v1_changed:    yes      # yes | no   is your final booking file different from code/original/booking_v1 ?
+  change_log_rows:  1   # rows in lab-report.md section 7 (always at least 1)
 
 checker:
   # Numbers from YOUR last run of: python tests/check_booking.py
   # They must add up to the number of checks it runs (32 on Path A, 13 on Path B).
   # Report them as they came out.
   # A FAIL you report and explain in lab-report.md costs you nothing. A hidden one costs the criterion.
-  pass:
-  fail:
-  error:
-  commit:              # the commit you ran the checker at: git rev-parse --short HEAD
+  pass:   33
+  fail:   0
+  error:  0
+  commit:    530a915          # the commit you ran the checker at: git rev-parse --short HEAD
                        # (normally the commit just before you commit this file — that is fine)
   known_fails: []      # every check ID that is still FAIL or ERROR, explained in lab-report.md §9.1, e.g. [M9, L9]
 
 assumptions:
   # The contract says times are integers and stops there. Decide, declare, and defend it in lab-report.md §9.2.
   # Any answer is acceptable. Not deciding is not.
-  non_integer_time:    # return-false | raise-error | not-handled | refused-by-compiler
+  non_integer_time:  not-handled  # return-false | raise-error | not-handled | refused-by-compiler
                        # what YOUR can_book does for start=600.5 or start="600"
 
 carried:
@@ -59,9 +59,11 @@ review_findings:
   # one of your tests, or v1.
   # Worthless:        "the AI made some mistakes"
   # Worth everything: "F7: v1 used start <= b, so can_book(570, 600, ...) was rejected although AC4 allows touching"
-  -
-  -
-  -
+  - "v1: the overlap line uses strict comparisons on both sides, so can_book(660, 720, 540, False, [(600, 660)]) is True as AC4 requires (F7 PASS)"
+  - "v1: passed F1-F10 and all 33 tests unchanged; the new edge case can_book(1439, 1440, 1438, False, []) returned True as AC1 requires, so no code fix was needed"
+  - "M9: only test_existing_unchanged_after_accepted_request caught the AC5 fault, because it checks the list after the call, not the returned value"
+  - "critique points 1-4 (type and input validation, blocked is True) rejected: contract guarantees integers, valid existing, valid now and a Boolean; AC5 says return False"
+  - "critique point 5 accepted: the docstring of can_book now says existing is never modified (AC5); comment-only change, suite and F1-F10 unchanged"
 
 honesty:
   v1_unedited:                  yes     # yes | no   code/original/ holds the assistant's first answer, untouched
