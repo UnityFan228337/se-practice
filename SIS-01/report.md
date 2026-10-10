@@ -73,7 +73,8 @@ The critique helped most by exposing where my reasoning was assumed rather than 
      - Sommerville, I. (2016). Software Engineering, 10th ed., Global Edition. Pearson. Ch. 1.
 -->
 
-- (write here)
+- Sommerville, I. (2016). Software Engineering, 10th ed., Global Edition. Pearson. Ch. 10 and Ch. 15.
+- PostgreSQL Global Development Group. PostgreSQL Documentation, "Constraints". https://www.postgresql.org/docs/current/ddl-constraints.html (accessed 2026-10-10).
 
 ## 7. Appendix A — Initial outline
 
@@ -292,8 +293,9 @@ When you're ready, tell me which concerns you want to address first and I'll hel
 
 | AI claim | Source and locator | Evidence found | Decision |
 | --- | --- | --- | --- |
-| (write here) | (write here) | (write here) | (write here) |
-| (write here) | (write here) | (write here) | (write here) |
+| Dependability covers several attributes (availability, reliability, safety, security), not only correctness, so security of resident data also matters. | Sommerville, I. (2016). Software Engineering, 10th ed., Global Edition. Pearson. Ch. 10, Dependable systems. | The chapter presents dependability as a set of attributes, including availability, reliability, safety and security, rather than a single property. | keep |
+| A uniqueness constraint on machine + time slot prevents two rows with the same slot, but does not solve fairness problems such as no-shows or hoarding. | PostgreSQL Documentation, "Constraints" (ddl-constraints), https://www.postgresql.org/docs/current/ddl-constraints.html, accessed 2026-10-10. | The documentation describes unique constraints as ensuring that values in a column or group of columns are unique across rows. It says nothing about overlapping slots or per-user limits. | qualify |
+| Reusing existing components (login, hosting, framework) reduces effort and risk for a small team. | Sommerville, I. (2016). Software Engineering, 10th ed., Global Edition. Pearson. Ch. 15, Software reuse. | The chapter lists reduced development effort and faster delivery as benefits of reuse, and also problems such as less control over system evolution. | qualify |
 
 ### Change log
 
