@@ -14,16 +14,16 @@ schema: 1
 assignment: "sis-01"            # do not edit
 
 student:
-  name:                         # as in the university register
-  student_id:                   # e.g. 24B031016
-  group:                        # your group code, as in the timetable
-  github:                       # username only, not a URL
+  name:               Maltsev Yaroslav          # as in the university register
+  student_id:          25B030214         # e.g. 24B031016
+  group:                [CSCI-2208] Software Engineering - Fall 2026       # your group code, as in the timetable
+  github:            UnityFan228337           # username only, not a URL
 
-topic:                          # one of 1.1 … 1.10 — the same as the **Topic:** line in report.md
+topic:            1.6              # one of 1.1 … 1.10 — the same as the **Topic:** line in report.md
 
-assistant:
-  tool:                         # e.g. ChatGPT (web), Claude.ai, Gemini app, DeepSeek chat
-  model:                        # the exact model with its version, as the tool shows it;
+assistant:      
+  tool:           Claude.ai              # e.g. ChatGPT (web), Claude.ai, Gemini app, DeepSeek chat
+  model:             Sonnet 5.5           # the exact model with its version, as the tool shows it;
                                 # if the tool does not show it, write: not displayed
 
 checker:                        # from your LAST run of python tests/check_report.py

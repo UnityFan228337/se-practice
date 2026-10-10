@@ -14,12 +14,12 @@ live in `report.md`, section 8 — this file is the summary, not a second copy.
      (section 5). If "no", say exactly what was assisted. An honest "no" costs far less than an
      undisclosed "yes". -->
 
-**Every source in section 6 is one I opened and read myself:** yes / no
+**Every source in section 6 is one I opened and read myself:** yes
 
-**Everything I submitted, I can explain and defend without consulting the assistant:** yes / no
+**Everything I submitted, I can explain and defend without consulting the assistant:** yes
 
 **Anything I accepted from the AI without fully understanding it:**
 <!-- Name the section and the sentence. "Nothing" is a valid answer only if it is true. -->
 
-Signed: <your name>
-Date:
+Signed: Maltsev Yaroslav
+Date: 10.11
