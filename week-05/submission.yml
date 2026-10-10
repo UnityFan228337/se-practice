@@ -18,8 +18,8 @@ student:
   github:        UnityFan228337      # your GitHub username, the one that owns the repo
 
 assistant:
-  tool:                # e.g. ChatGPT, Claude, Gemini, DeepSeek, Grok
-  model:               # the exact model name with its version. "ChatGPT" is not a model name.
+  tool:           Claude.ai     # e.g. ChatGPT, Claude, Gemini, DeepSeek, Grok
+  model:           Sonnet 5.5    # the exact model name with its version. "ChatGPT" is not a model name.
 
 language:
   name:  python              # python | javascript | typescript | java | csharp | go | cpp | <other>
