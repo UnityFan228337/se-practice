@@ -31,6 +31,7 @@ class Room {
 
 class Booking {
   - bookingId: String
+  - startTime: DateTime
   - timeSlot: TimeSlot
   - status: BookingStatus
   - createdAt: DateTime
@@ -70,8 +71,13 @@ enum NotificationType {
 ' Relationships & Multiplicities
 Student "1" -- "0..*" Booking : creates / owns >
 Room "1" -- "0..*" Booking : reserved under >
+' why: a booking is anchored to exactly one time slot and the slot is a value object that defines the reservation window
 Booking "1" *-- "1" TimeSlot : scheduled for >
 Booking "1" -- "1..*" ConfirmationNotification : triggers >
 Administrator "0..*" -- "0..*" Room : manages >
+
+note right of Booking
+  R2: Active bookings for the same room cannot overlap.
+end note
 
 @enduml

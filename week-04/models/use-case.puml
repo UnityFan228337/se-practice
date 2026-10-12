@@ -37,8 +37,9 @@ admin -- UC_Block
 admin -- UC_Unblock
 admin -- UC_Metrics
 
-' Include Relationships (Mandatory System Behaviors)
+' why: booking and cancellation are required system actions that trigger the confirmation; the confirmation is not a separate user goal
 UC_Book ..> UC_Notify : <<include>>
+' why: when a student cancels, the system sends a cancellation confirmation as part of the same required workflow
 UC_Cancel ..> UC_Notify : <<include>>
 
 @enduml
