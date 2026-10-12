@@ -15,8 +15,8 @@
 | AI assistant | Gemini |
 | Exact model | Gemini 3.6 Flash |
 | Renderer | PlantUML web server |
-| Behaviour diagram | both |
-| Stories used | my week-03 stories |
+| Behaviour diagram | sequence |
+| Stories used | reference set from README §3 |
 
 ---
 
@@ -49,12 +49,11 @@ rules, then attempt the reservation. Show a successful confirmation and an unava
 Label messages and replies. Explain new design components and all assumptions. 
 ```
 
-<!-- didnt sent
 ### 2.4 Focused correction prompts (if you sent any)
 
 ```text
-<paste, or write "none">
-``` -->
+none
+```
 
 ### 2.5 Critique prompt
 
