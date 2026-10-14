@@ -130,7 +130,9 @@
 <!-- 200–300 words. Your main design choices; how the class diagram and the sequence diagram
      complement each other; why an activity diagram could also help explain the workflow. -->
 
-The core design choices center on maintaining strict data integrity and enforcing business rules through isolated transactional boundaries. The domain class diagram establishes structural foundations by mapping Student, Course, Offering, and Enrollment with explicit attributes and multiplicities, grounding constraints like offering capacity and unique composite keys for duplicate prevention. In contrast, the sequence diagram captures dynamic behavior, mapping how the UI, controller, and database interact during catalog browsing, guarded successful registrations, and rejections. These models complement each other by bridging static architecture with runtime execution paths: the class diagram defines what data entities exist and their rules, while the sequence diagram shows how messages flow and transactions execute to uphold those rules.
+The core design choices center on maintaining strict data integrity and enforcing business rules through isolated transactional boundaries. The domain class diagram establishes structural foundations by mapping Student, Course, CourseOffering, and Enrollment with explicit attributes and multiplicities, grounding constraints like offering capacity and unique composite keys for duplicate prevention. In contrast, the sequence diagram captures dynamic behavior, mapping how the UI, controller, and database interact during catalog browsing, guarded successful registrations, and rejections. These models complement each other by bridging static architecture with runtime execution paths: the class diagram defines what data entities exist and their rules, while the sequence diagram shows how messages flow, how atomic transactions operate, and how state changes are committed or rolled back to uphold those rules. 
+
+Furthermore, incorporating an activity diagram would significantly enhance the workflow explanation by clearly visualizing branching logic, parallel concurrency controls, and state transitions. While sequence diagrams focus on object lifelines and messaging order, an activity diagram excels at showing conditional decision nodes—such as routing success versus course full or already enrolled rejections—providing a holistic, bird-s-eye view of the process logic without cluttering message sequencing. Together, these complementary modeling artifacts ensure that both structural data integrity and complex runtime transactional constraints are fully specified and verified against the rules.
 
 
 ## 9. Reflection
@@ -302,6 +304,80 @@ In alignment with the strict boundary of rules R1–R5, the following user assum
 **Prompt:**
 
 ~~~~text
+
+### US-01: Course Catalog and Availability Viewing
+
+**As a** student,
+
+**I want to** view the course catalog for a specific semester showing course codes, titles, offerings, and available places,
+
+**So that** I can identify open courses to register for.
+
+* **AC-01: Displaying Catalog Details**
+* **Given** a student accesses the course registration interface,
+* **When** they view the catalog for a semester,
+* **Then** the system displays the course code, title, and specific offering.
+* **Rule Mapping:** R1
+
+
+* **AC-02: Viewing Available Places**
+* **Given** the course catalog is loaded for a selected semester,
+* **When** course offerings are listed,
+* **Then** the system shows the exact available places for each offering.
+* **Rule Mapping:** R1
+
+
+
+---
+
+### US-02: Successful Course Registration
+
+**As a** student,
+
+**I want to** register for an open course offering,
+
+**So that** my enrollment is recorded, availability is updated, and I receive a confirmation.
+
+* **AC-03: Successful Enrollment Processing**
+* **Given** a course offering has available places,
+* **When** a student submits a registration request,
+* **Then** the system rechecks availability, creates exactly one Enrollment linking the student and offering, updates availability, and returns a confirmation.
+* **Rule Mapping:** R2, R4
+
+
+* **AC-04: Concurrent Capacity Enforcement**
+* **Given** multiple students attempt to register simultaneously for the final available place,
+* **When** the system rechecks current availability during registration,
+* **Then** only requests within capacity succeed while subsequent requests are evaluated against updated availability.
+* **Rule Mapping:** R2, R4
+
+
+
+---
+
+### US-03: Registration Rejection (Capacity and Duplicates)
+
+**As a** student,
+
+**I want** the system to reject my registration if a course is full or if I am already enrolled,
+
+**So that** capacity limits and duplicate policies are enforced with a clear explanation.
+
+* **AC-05: Rejection Due to Full Capacity**
+* **Given** a course offering has zero available places,
+* **When** a student attempts to register,
+* **Then** the system rejects the request, explains "course full", creates no enrollment, and leaves the enrollment count unchanged.
+* **Rule Mapping:** R2, R5
+
+
+* **AC-06: Rejection Due to Duplicate Enrollment**
+* **Given** a student already has an active enrollment in the same offering,
+* **When** the student attempts to register for it again,
+* **Then** the system rejects the request, explains "already enrolled", creates no enrollment, and leaves the enrollment count unchanged.
+* **Rule Mapping:** R3, R5
+
+
+
 Using my approved scenario, R1–R5, stories and criteria below, return separate PlantUML code blocks for a sequence diagram and a domain class diagram.
 Sequence: include catalog browsing and guarded success, full-course and duplicate outcomes. Model final checks and creation as one atomic operation.
 Class: show domain concepts, useful attributes and multiplicities. State the capacity and uniqueness constraints. Explain assumptions and any technical lifelines.

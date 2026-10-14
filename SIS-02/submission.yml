@@ -14,10 +14,10 @@ schema: 1
 assignment: "sis-02"            # do not edit
 
 student:
-  name:                         # as in the university register
-  student_id:                   # e.g. 00X000000
+  name:              Maltsev Yaroslav           # as in the university register
+  student_id:             25B030214      # e.g. 00X000000
   group:                        # your group code, as in the timetable
-  github:                       # username only, not a URL
+  github:              UnityFan228337               # username only, not a URL
 
 assistant:
   tool:                         # e.g. ChatGPT (web), Claude.ai, Gemini app, DeepSeek chat

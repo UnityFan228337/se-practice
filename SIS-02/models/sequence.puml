@@ -20,33 +20,36 @@ UI --> Student: Show catalog
 Student -> UI: Register for offering
 UI -> Ctrl: register(student, offering)
 Ctrl -> Svc: register(student, offering)
-Svc -> DB: BEGIN TRANSACTION (Atomic Operation)
-DB -> DB: SELECT ... FOR UPDATE (Lock Offering record)
-DB -> DB: Check capacity & duplicates
 
-alt already enrolled
-    DB --> Svc: Duplicate enrollment found
-    DB -> DB: ROLLBACK TRANSACTION
-    DB --> Ctrl: Reject ("already enrolled")
-    Ctrl --> UI: Return "already enrolled" explanation
-    UI --> Student: Show rejection message
+critical Atomic Operation
+    Svc -> DB: BEGIN TRANSACTION
+    DB -> DB: SELECT ... FOR UPDATE (Lock Offering record)
+    DB -> DB: Check capacity & duplicates
 
-else course full (availablePlaces == 0)
-    DB --> Svc: Capacity reached (availablePlaces == 0)
-    DB -> DB: ROLLBACK TRANSACTION
-    DB --> Ctrl: Reject ("course full")
-    Ctrl --> UI: Return "course full" explanation
-    UI --> Student: Show rejection message
+    alt already enrolled
+        DB --> Svc: Duplicate enrollment found
+        DB -> DB: ROLLBACK TRANSACTION
+        DB --> Ctrl: Reject ("already enrolled")
+        Ctrl --> UI: Return "already enrolled" explanation
+        UI --> Student: Show rejection message
 
-else not enrolled and places left (availablePlaces > 0)
-    DB -> DB: Decrement offering.availablePlaces
-    DB -> Svc: createEnrollment(studentId, offeringId)
-    Svc -> DB: INSERT INTO Enrollment
-    DB -> DB: COMMIT TRANSACTION
-    DB --> Svc: Success confirmation
-    Svc --> Ctrl: Return success confirmation
-    Ctrl --> UI: Return confirmation
-    UI --> Student: Show success confirmation
+    else course full (availablePlaces == 0)
+        DB --> Svc: Capacity reached (availablePlaces == 0)
+        DB -> DB: ROLLBACK TRANSACTION
+        DB --> Ctrl: Reject ("course full")
+        Ctrl --> UI: Return "course full" explanation
+        UI --> Student: Show rejection message
+
+    else not enrolled and places left (availablePlaces > 0)
+        DB -> DB: Decrement offering.availablePlaces
+        DB -> Svc: createEnrollment(studentId, offeringId)
+        Svc -> DB: INSERT INTO Enrollment
+        DB -> DB: COMMIT TRANSACTION
+        DB --> Svc: Success confirmation
+        Svc --> Ctrl: Return success confirmation
+        Ctrl --> UI: Return confirmation
+        UI --> Student: Show success confirmation
+    end
 end
 
 @enduml
