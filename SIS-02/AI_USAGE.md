@@ -7,21 +7,23 @@ live in `report.md`, section 11 — this file is the summary, not a second copy.
 
 | Tool | Exact model / plan | Used for | Which sections and files it touched |
 | --- | --- | --- | --- |
-| | | | |
+| Google Gemini | Gemini 3.6 Flash | Structuring user stories, acceptance criteria, PlantUML sequence and class diagrams, traceability matrices, source checks, and modeling explanations. | Sections 1, 2, 3, 4, 5, 7, 8, 10, 13, and PlantUML model files (`models/original/`). |
 
-**Three parts of this assignment are yours alone. All three were written without AI assistance:** yes / no
+**Three parts of this assignment are yours alone. All three were written without AI assistance:** yes
 <!-- The first scope statement and initial assumptions (report.md section 10, committed BEFORE
      Prompt A), the walkthroughs (section 6) and the reflection (section 9). If "no", say exactly
      what was assisted. An honest "no" costs far less than an undisclosed "yes". -->
 
-**The files in `models/original/` are the assistant's Prompt B output, unedited:** yes / no
 
-**Every source in section 13 is one I opened and read myself:** yes / no
+**The files in `models/original/` are the assistant's Prompt B output, unedited:** yes 
 
-**Everything I submitted, I can explain and defend without consulting the assistant:** yes / no
+**Every source in section 13 is one I opened and read myself:** yes 
 
-**Anything I accepted from the AI without fully understanding it:**
+**Everything I submitted, I can explain and defend without consulting the assistant:** yes 
+
+**Anything I accepted from the AI without fully understanding it:**   Nothing
 <!-- Name the section or the diagram element. "Nothing" is a valid answer only if it is true. -->
 
-Signed: <your name>
-Date:
+
+Signed: Maltsev Yaroslav
+Date: 2026-10-15
