@@ -1,0 +1,49 @@
+@startuml
+autonumber
+actor Student
+participant "UI / Gateway" as UI
+participant "RegistrationController" as Ctrl
+participant "EnrollmentService" as Svc
+database "Database (Atomic Tx)" as DB
+
+== 1. Catalog Browsing (R1) ==
+Student -> UI: Request semester catalog
+UI -> Ctrl: getCatalog(semester)
+Ctrl -> DB: Query offerings & available places
+DB --> Ctrl: Return catalog data
+Ctrl --> UI: Display catalog (code, title, offering, places)
+UI --> Student: Show catalog
+
+== 2. Guarded Success Registration (R2, R4) ==
+Student -> UI: Register for offering
+UI -> Ctrl: register(student, offering)
+Ctrl -> DB: BEGIN TRANSACTION (Atomic Operation)
+DB -> Svc: Check capacity (R2) & duplicates (R3)
+Svc --> DB: Available > 0, No duplicate found
+DB -> DB: Insert Enrollment & Decrement Offering.availablePlaces
+DB --> Ctrl: Success confirmation (Create one Enrollment)
+Ctrl --> UI: Return confirmation
+UI --> Student: Show success confirmation
+
+== 3. Full-Course Rejection (R2, R5) ==
+Student -> UI: Register for full offering
+UI -> Ctrl: register(student, offering)
+Ctrl -> DB: BEGIN TRANSACTION (Atomic Operation)
+DB -> Svc: Check capacity (R2)
+Svc --> DB: availablePlaces == 0 ("course full")
+DB -> DB: Rollback / No change to enrollment count
+DB --> Ctrl: Reject (course full)
+Ctrl --> UI: Return "course full" explanation
+UI --> Student: Show rejection message
+
+== 4. Duplicate Enrollment Rejection (R3, R5) ==
+Student -> UI: Register for already enrolled offering
+UI -> Ctrl: register(student, offering)
+Ctrl -> DB: BEGIN TRANSACTION (Atomic Operation)
+DB -> Svc: Check duplicate (R3)
+Svc --> DB: Existing enrollment found ("already enrolled")
+DB -> DB: Rollback / No change to enrollment count
+DB --> Ctrl: Reject (already enrolled)
+Ctrl --> UI: Return "already enrolled" explanation
+UI --> Student: Show rejection message
+@enduml
