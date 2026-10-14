@@ -15,12 +15,12 @@
      what is out of scope (payments, prerequisites, timetable clashes, waiting lists,
      cancellation) — section 2 must not mention them. Section 10 keeps your first version. -->
 
-**Scope:** (write here)
+**Scope:** 
 
 **Assumptions:**
 
-1. (write here)
-2. (write here)
+1. 
+2. 
 
 ## 2. User stories and acceptance criteria
 
@@ -146,12 +146,12 @@
 <!-- Written BEFORE you run Prompt A, committed and pushed in your first commit, and never
      edited afterwards. This is what you paste into Prompt A as "My initial assumptions". -->
 
-**Scope:** (write here)
+**Scope:** Make an system that will allow students choose a course and request registration, each have limited places. Course = subject. CourseOffering = 1 scheduled section in semester. Registration always show a specific offer. Student already singed in. Offering exist. Capacity > 0
 
 **Initial assumptions:**
 
-1. (write here)
-2. (write here)
+1. When places are done mark this. And if some students drop course, append a place
+2. If multiple students request at the same time, database had to have a  atomic transactions.
 
 ## 11. Appendix B — AI exchanges
 
