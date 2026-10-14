@@ -169,7 +169,7 @@ One remaining limitation of this model is its silence on asynchronous processing
 ### B1 — Requirements (Prompt A)
 
 - **Tool:** Gemini
-- **Model:** Gemini 3.6
+- **Model:** Gemini 3.6 Flash
 - **Date:** 2026-10-14
 - **Purpose:** draft 3 user stories and 6 acceptance criteria
 
