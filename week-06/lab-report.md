@@ -28,8 +28,8 @@ Fill the first three columns now; fill the last one after Task 3.
 
 | # | What I expect to go wrong | AC it concerns | Was I right? (after Task 3) |
 | --- | --- | --- | --- |
-| 1 | reversed time | AC1 |  |
-| 2 | size of buttons for mobile or desktop interface | AC-6 | |
+| 1 | reversed time | AC1 | No |
+| 2 | size of buttons for mobile or desktop interface | AC-6 | No |
 
 **The initial prompt exactly as I sent it** — the deck's prompt with AC1–AC6 pasted in place of
 `[paste AC1–AC6]`, nothing else changed:
@@ -95,15 +95,15 @@ no way to set up the case). Save each final run as `evidence/final-T<n>.png`.
 
 | # | Case | What you set up and request | Expected | AC | Result on v1 | Result on final | Final screenshot |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T1 | Touching | 11:00–12:00 | Available | AC4 | Available | Available / Unavailable / Not testable | final-T1.png |
-| T2 | Overlap | 10:30–11:30 | Unavailable | AC4 |  Unavailable  | Available / Unavailable / Not testable | final-T2.png |
-| T3 | Blocked | 11:00–12:00, room blocked | Unavailable | AC3 |  Unavailable  | Available / Unavailable / Not testable | final-T3.png |
-| T4 | Exactly 2 hours | 12:00–14:00 | Available | AC2 | Available | Available / Unavailable / Not testable | final-T4.png |
-| T5 | Over 2 hours | 12:00–14:01 | Unavailable | AC2 |  Unavailable | Available / Unavailable / Not testable | final-T5.png |
-| T6 | Starts now | 09:00–09:30 (current time 09:00) | Unavailable | AC1 | Available | Available / Unavailable / Not testable | final-T6.png |
-| T7 | Reversed times | 12:00–11:00, and the page says why | Unavailable | AC1, AC6 |  Unavailable  | Available / Unavailable / Not testable | final-T7.png |
-| T8 | Same check twice | T1, then T1 again without reloading | Available | AC5 | Available  | Available / Unavailable / Not testable | final-T8.png |
-| T9 | Narrow screen | T1 at about 375 px wide | Available | AC6 | Available  | Available / Unavailable / Not testable | final-T9.png |
+| T1 | Touching | 11:00–12:00 | Available | AC4 | Available | Available  | final-T1.png |
+| T2 | Overlap | 10:30–11:30 | Unavailable | AC4 |  Unavailable  |  Unavailable | final-T2.png |
+| T3 | Blocked | 11:00–12:00, room blocked | Unavailable | AC3 |  Unavailable  |  Unavailable  | final-T3.png |
+| T4 | Exactly 2 hours | 12:00–14:00 | Available | AC2 | Available | Available  | final-T4.png |
+| T5 | Over 2 hours | 12:00–14:01 | Unavailable | AC2 |  Unavailable |  Unavailable  | final-T5.png |
+| T6 | Starts now | 09:00–09:30 (current time 09:00) | Unavailable | AC1 | Available |  Unavailable  | final-T6.png |
+| T7 | Reversed times | 12:00–11:00, and the page says why | Unavailable | AC1, AC6 |  Unavailable  |  Unavailable  | final-T7.png |
+| T8 | Same check twice | T1, then T1 again without reloading | Available | AC5 | Available  | Available  | final-T8.png |
+| T9 | Narrow screen | T1 at about 375 px wide | Available | AC6 | Available  | Available | final-T9.png |
 
 ---
 
@@ -194,8 +194,8 @@ the AC (or the scope) that justifies it.
 
 | # | What Bolt changed or suggested | accept / reject | Reason — cite the AC or the scope | Retest: which cases, result |
 | --- | --- | --- | --- | --- |
-| 1 | | accept / reject | | |
-| 2 | | accept / reject | | |
+| 1 | Made campus time editable via a time input in the header (currentMinutes became state, added handleSetCampusTime)	 | accept | Directly serves the task scope ("set a campus time"). No AC violated — it only changes where currentMinutes comes from, not how it's used.	 | Set campus time to 09:00, interval 09:01–09:30, check → Available. Set to 09:30, same interval → rejected by AC1. Pass. |
+| 2 | Changed start < currentMinutes to start <= currentMinutes in both availability.ts and App.tsx startError	 | accept | Fixes AC1, which requires start to be after current time (strict >), not equal-to-or-after. The old <=-equivalent let start == current through. | Campus time 09:00, interval 09:00–09:30 → now rejected "Start must be after current time." 09:01–09:30 → available. Pass. |
 
 ---
 
@@ -216,10 +216,11 @@ Pick one file or component Bolt generated that matters for AC1–AC5 — the one
 availability is the best choice. Name its path in backticks, then explain in your own words, without
 the assistant, what it does and how it decides. 60 words or more.
 
-**File:** `(write here, e.g. src/App.tsx)`
+**File:**  src/lib/availability.ts
 
 <!-- Write your explanation below this line -->
 
+The file that decides whether a room is available is src/lib/availability.ts. It exports a checkAvailability function that takes the selected room, a candidate start and end time (in minutes since midnight), and the current campus time. It runs through every acceptance rule in order: first it checks that a room was picked and the times are valid numbers, then it verifies the interval falls within the campus opening hours, that start comes before end, and that start is strictly after the current time — not equal to it. Next it rejects any booking longer than the maximum allowed duration, then blocks rooms flagged as unavailable, and finally it checks for overlaps with existing bookings using a strict-overlap rule that lets touching endpoints pass. If all checks pass, it returns an available result with the duration; otherwise it returns a rejection with a human-readable reason and a machine-readable reason key so the banner can display the right message. It also exports two small helpers — minutesToLabel and labelToMinutes — that convert between minute counts and the HH:MM strings the time inputs use.
 ---
 
 ## 9. What still fails, and what the criteria do not say
