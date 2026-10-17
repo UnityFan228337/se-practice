@@ -29,7 +29,7 @@ counts:
   issues:         2     # rows in lab-report.md section 5
   cleanup_prompts:  2   # how many prompts you sent after v1 (repair prompt not included)
   change_log_rows:   2  # rows in lab-report.md section 7 (2 to 4)
-  v1_matches:       1   # how many of T1-T9 gave the Expected result on v1 (0-9)
+  v1_matches:       8   # how many of T1-T9 gave the Expected result on v1 (0-9)
   final_matches:     9  # how many of T1-T9 give the Expected result on your final (0-9)
 
 checker:
@@ -37,10 +37,10 @@ checker:
   # They must add up to the number of checks it runs (27).
   # Report them as they came out.
   # A FAIL you report and explain in lab-report.md costs you nothing. A hidden one costs the criterion.
-  pass:
-  fail:
-  error:
-  commit:              # the commit you ran the checker at: git rev-parse --short HEAD
+  pass:    27
+  fail:   0
+  error: 0
+  commit:       feae977       # the commit you ran the checker at: git rev-parse --short HEAD
                        # (normally the commit just before you commit this file — that is fine)
   known_fails: []      # every check ID that is still FAIL or ERROR, explained in lab-report.md §9.1, e.g. [T6, E4]
 
@@ -48,16 +48,18 @@ assumptions:
   # AC1 allows a booking to end at 1440 (24:00). A time input usually stops at 23:59.
   # Decide what YOUR final page does, declare it, defend it in lab-report.md §9.2.
   # Any answer is acceptable. Not deciding is not.
-  end_of_day:          # typed-24:00 | end-of-day-option | minutes-input | not-expressible
+  end_of_day:     not-expressible     # typed-24:00 | end-of-day-option | minutes-input | not-expressible
 
 review_findings:
   # Three or more. One line each, and each one names what it is about: an AC, a case (T1-T9),
   # v1, or a file in prototype/.
   # Worthless:        "Bolt made some mistakes"
   # Worth everything: "T8: v1's Check button pushed the request into bookings, so the second check said Unavailable (AC5)"
-  -
-  -
-  -
+  - "T6: v1's availability.ts used start < currentMinutes, so a start equal to the current time (09:00-09:30 at 09:00) was Available instead of Unavailable (AC1)"
+  - "prototype/project/src/App.tsx: v1 showed the campus time as plain text, so T6 could not be set up; the final makes it an editable time input"
+  - "prototype/project/src/App.tsx: the same strict-after check was duplicated in startError, so the field message had to be fixed together with availability.ts (AC1, AC6)"
+  - "prototype/project/src/App.tsx: handleCheck recomputed checkAvailability although livePreview already held the result; the final reuses livePreview (AC5)"
+  - "AC1: the final uses type=time inputs, which stop at 23:59, so an end of exactly 24:00 cannot be entered (not-expressible, lab-report 9.2)"
 
 honesty:
   v1_export_unedited:       yes         # yes | no   original/ holds Bolt's first version, as downloaded
