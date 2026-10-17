@@ -63,6 +63,10 @@ export default function App() {
     return undefined;
   }, [endMin, startMin]);
 
+  const livePreview = useMemo(() => {
+    return checkAvailability(selectedRoom, startMin, endMin, currentMinutes);
+  }, [selectedRoom, startMin, endMin, currentMinutes]);
+
   const handleCheck = useCallback(() => {
     setResult(livePreview);
     setChecked(true);
@@ -75,10 +79,6 @@ export default function App() {
     setResult(null);
     setChecked(false);
   }, []);
-
-  const livePreview = useMemo(() => {
-    return checkAvailability(selectedRoom, startMin, endMin, currentMinutes);
-  }, [selectedRoom, startMin, endMin, currentMinutes]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100">
