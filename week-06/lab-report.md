@@ -129,13 +129,62 @@ in) and Bolt's answer, unedited.
 **Functional fix prompt, as sent, and Bolt's answer:**
 
 ```text
-(paste here)
+In the current prototype, Set the current time to 09:00. Enter a candidate booking interval of 09:00–09:30. Click "Check Availability". produces The prototype accepts the interval as "Available" due to a naive start >= current comparison check in the validation script, but AC1 requires The request is rejected with a validation error because AC1 dictates that the start time must be after the supplied current time (start > current). Make the smallest change that fixes this behavior. Preserve the other acceptance criteria. Explain which file/component you changed and why.
+
+
+0123456789
+ actions taken
+Now let me also fix the UI-side validation in App.tsx, which has the same startMin < currentMinutes check used for the error message under the Start time field.
+
+
+0123456789
+ actions taken
+Build passes. Here's what I changed and why:
+
+Files changed:
+
+src/lib/availability.ts — The core availability logic. Changed start < currentMinutes to start <= currentMinutes in the AC1 check. This means a start time equal to the current campus time is now rejected, which is what AC1 requires (start must be after current time, not equal to it).
+
+src/App.tsx — The inline validation error shown under the Start time field. Made the same < → <= change so the UI error message matches the actual rejection logic.
+
+Result: With campus time set to 09:00 and a candidate interval of 09:00–09:30, the app now rejects the booking with "Start time must be after the current time (09:00)." instead of accepting it. All other acceptance criteria (end-before-start, max duration, blocked rooms, overlap detection) are untouched.
+
 ```
 
 **Cleanup prompt, as sent, and Bolt's answer:**
 
 ```text
-(paste here)
+Review only the validation/computation logic split between App.tsx and availability.ts. for unnecessary duplication, confusing naming, or UI feedback problems. Suggest one small cleanup. Do not add features or redesign the whole application. Implement it only if it preserves AC1–AC6.
+
+I'll review the validation logic split between availability.ts and App.tsx — the area we just touched.
+
+
+0123456789
+ files read
+Here's my review of [the validation logic split between App.tsx and availability.ts].
+
+Finding: handleCheck calls checkAvailability(...) even though livePreview already computes the exact same result on every render. This is a redundant recomputation — the data hasn't changed between the last render and the click.
+
+Cleanup: Make handleCheck reuse the already-computed livePreview value instead of calling checkAvailability a second time. This eliminates the duplication without changing any behavior or acceptance criteria.
+
+
+0123456789
+ actions taken
+Build passes. Here's the review summary:
+
+Area reviewed: The validation/computation logic split between App.tsx and availability.ts.
+
+Issue found: handleCheck was calling checkAvailability() a second time to produce a result that livePreview had already computed on the same render. Same inputs, same function, same output — pure duplication.
+
+Fix applied: handleCheck now reuses the already-computed livePreview value. This doesn't change any acceptance criteria (AC1–AC6) — the result is identical, we just compute it once instead of twice.
+
+No other issues found: The startError/endError inline checks in App.tsx serve a different purpose (real-time field-level error messages) than checkAvailability (the full validation including room state), so they aren't redundant — they catch problems before a room is even selected.
+
+
+
+
+
+
 ```
 
 Add further blocks for further prompts.
