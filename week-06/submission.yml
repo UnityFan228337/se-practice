@@ -13,24 +13,24 @@ schema: 1
 week: "06"
 
 student:
-  name:
-  student_id:          # as in KBTU records, e.g. 00X000000
-  github:              # your GitHub username, the one that owns the repo
+  name:  Ярослав
+  student_id:    25B030214      # as in KBTU records, e.g. 00X000000
+  github:        UnityFan228337      # your GitHub username, the one that owns the repo
 
 assistant:
-  tool:                # Bolt.new — or the tool you used instead, with fallback_reason filled
-  model:               # the exact model Bolt shows (with its version), or: not displayed
+  tool:           Bolt.new     # Bolt.new — or the tool you used instead, with fallback_reason filled
+  model:            not displayed   # the exact model Bolt shows (with its version), or: not displayed
   fallback_reason:     # only if tool is not Bolt.new: why (e.g. "Bolt daily token limit reached"); else: none
 
 bolt:
-  project_url:         # the share link of your Bolt project, or: not-shared
+  project_url:     https://smart-campus-room-av-p15h.bolt.host    # the share link of your Bolt project, or: not-shared
 
 counts:
-  issues:              # rows in lab-report.md section 5
-  cleanup_prompts:     # how many prompts you sent after v1 (repair prompt not included)
-  change_log_rows:     # rows in lab-report.md section 7 (2 to 4)
-  v1_matches:          # how many of T1-T9 gave the Expected result on v1 (0-9)
-  final_matches:       # how many of T1-T9 give the Expected result on your final (0-9)
+  issues:         2     # rows in lab-report.md section 5
+  cleanup_prompts:  2   # how many prompts you sent after v1 (repair prompt not included)
+  change_log_rows:   2  # rows in lab-report.md section 7 (2 to 4)
+  v1_matches:       1   # how many of T1-T9 gave the Expected result on v1 (0-9)
+  final_matches:     9  # how many of T1-T9 give the Expected result on your final (0-9)
 
 checker:
   # Numbers from YOUR last run of: python tests/check_prototype.py
@@ -60,7 +60,7 @@ review_findings:
   -
 
 honesty:
-  v1_export_unedited:                # yes | no   original/ holds Bolt's first version, as downloaded
-  screenshots_unedited:              # yes | no   every image in evidence/ is an unedited capture
-  can_explain_component_without_ai:  # yes | no   you may be asked in class
-  ai_usage_disclosed:                # yes | no   AI_USAGE.md is complete
+  v1_export_unedited:       yes         # yes | no   original/ holds Bolt's first version, as downloaded
+  screenshots_unedited:      yes        # yes | no   every image in evidence/ is an unedited capture
+  can_explain_component_without_ai: no  # yes | no   you may be asked in class
+  ai_usage_disclosed:     yes           # yes | no   AI_USAGE.md is complete
