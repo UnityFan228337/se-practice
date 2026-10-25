@@ -29,18 +29,18 @@
 
 ### 2.1 Scope in my own words
 
-**Scope:** (write here)
+**Scope:** One responsive web page lets a student pick a time slot for a single room and see whether it is Available or Unavailable, using fictional bookings only. The page only checks availability and never creates or confirms a booking; login, database, backend, external APIs and payments are out of scope.
 
 ### 2.2 The acceptance criteria in my own words
 
 | AC | In my own words |
 | --- | --- |
-| AC1 | (write here) |
-| AC2 | (write here) |
-| AC3 | (write here) |
-| AC4 | (write here) |
-| AC5 | (write here) |
-| AC6 | (write here) |
+| AC1 | Times are whole minutes from midnight; start is at least 0, before end, and end is at most 1440; start must be later than the current time, not equal to it. |
+| AC2 | A booking may last at most 120 minutes; exactly 120 minutes is fine, 121 is not. |
+| AC3 | If the room is blocked, every request is rejected, whatever the times are. |
+| AC4 | A request is rejected if it overlaps any existing booking; if it only touches a booking at an end time (one ends when the other starts) it is allowed. |
+| AC5 | The page shows a clear Available or Unavailable answer, and checking never changes or removes the existing bookings. |
+| AC6 | Invalid input gets a message the student can understand, and the page works on a narrow phone screen. |
 
 ### 2.3 Likely failure points
 
@@ -48,30 +48,31 @@
 
 | # | Failure point | AC | How I will check it |
 | --- | --- | --- | --- |
-| 1 | (write here) | (write here) | (write here) |
-| 2 | (write here) | (write here) | (write here) |
+| 1 | Touching booking treated as overlap (using <= instead of < in the overlap test) | AC4 | T1: 660-720 against (600, 660) must be True / Available |
+| 2 | Start equal to now accepted (using < instead of <= for the "after now" check) | AC1 | T6: 540-570 with now = 540 must be False / Unavailable |
 
 ### 2.4 The contract
-
+ 
 | Parameter | Meaning | Type and allowed values |
 | --- | --- | --- |
-| `start` | (write here) | (write here) |
-| `end` | (write here) | (write here) |
-| `now` | (write here) | (write here) |
-| `blocked` | (write here) | (write here) |
-| `existing` | (write here) | (write here) |
-| returns | (write here) | (write here) |
+| `start` | requested start, minutes after midnight | integer, valid range 0 to 1439 |
+| `end` | requested end, minutes after midnight | integer, must be greater than start and at most 1440 |
+| `now` | current time in minutes | integer, assumed valid 0 to 1439 |
+| `blocked` | whether the room is blocked | boolean |
+| `existing` | current bookings as (start, end) pairs | collection of integer pairs, may be empty or unsorted; never modified |
+| returns | whether the request is allowed | `True` only when AC1-AC4 all hold, otherwise `False` |
 
 ### 2.5 Initial assumptions and manual checks
 
 **Assumptions:**
 
-1. (write here)
-2. (write here)
+1. "now" is always valid (0-1439), so the function does not validate it.
+2. Existing bookings are valid pairs with start before end, and an interval includes its start and excludes its end.
 
 **Checked manually:**
 
-- (write here)
+- T1 by hand: 660 < 660 is false, so (660, 720) does not overlap (600, 660); the answer must be Available.
+- T6 by hand: start 540 is not strictly after now 540, so the answer must be Unavailable.
 
 ## 3. Python v1 review
 
