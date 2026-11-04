@@ -22,7 +22,7 @@ assistant:
   model:               # the exact model with its version, or: not displayed
 
 project:
-  baseline:            # week-06 (your Week 06 Bolt project) | starter (the provided starter/)
+  baseline:      starter      # week-06 (your Week 06 Bolt project) | starter (the provided starter/)
   bolt_url:            # the share link of your Bolt project, or: not-shared
   vitest:              # the Vitest version from the "RUN  v..." line, e.g. 3.2.4
 
