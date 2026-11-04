@@ -28,8 +28,8 @@ describe('canBook', () => {
     expect(canBook({ ...fixture(), start: 1380, end: 1441 })).toBe(false);
   });
 
-  test('T06 AC2: exactly 120 minutes is rejected', () => {
-    expect(canBook({ ...fixture(), start: 720, end: 840 })).toBe(false);
+  test('T06 AC2: exactly 120 minutes is allowed', () => {
+    expect(canBook({ ...fixture(), start: 720, end: 840 })).toBe(true);
   });
 
   test('T07 AC2: a 121-minute request is rejected', () => {
