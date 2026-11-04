@@ -228,7 +228,17 @@ change and after restoring the correct code from section 7. Every test must pass
 is still open, leave its test failing and explain it in 9.1.
 
 ```text
-Not run. The final suite is present in `app/src/booking.test.ts`, but a final Vitest run was not completed; no final-run output is available to paste.
+> smart-campus-availability@0.0.0 test
+> vitest run
+
+ RUN  v3.2.7 C:/Users/yar/Desktop/se/se-practice/week-07/app
+
+ ✓ src/booking.test.ts (17 tests) 3ms
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  17:17:23
+   Duration  468ms (transform 32ms, setup 0ms, collect 33ms, tests 3ms, environment 0ms, prepare 123ms)
 ```
 
 ---
@@ -242,8 +252,8 @@ error does not count as detection.
 | Trial | Intentional change | Detected / Survived | Failing test ID(s) | If it survived: why, and what you added |
 | --- | --- | --- | --- | --- |
 | M1 | Reject duration >= 120 instead of > 120 | Detected | T06 | |
-| M2 | Treat touching endpoints as an overlap | Not run | — | No test result; do not claim detection. |
-| M3 | Remove the blocked-room rejection | Not run | — | No test result; do not claim detection. |
+| M2 | Treat touching endpoints as an overlap | Detected | T01, T08 | Both endpoint tests fail when touching is incorrectly considered overlap. |
+| M3 | Remove the blocked-room rejection | Detected | T13 | The blocked-room test fails when the rejection is removed. |
 
 **The run of each mutant, pasted unedited.** Paste the `Tests` summary line and the failing test
 names at least:
@@ -253,10 +263,18 @@ M1 (actual run):
 × canBook > T06 AC2: exactly 120 minutes is allowed
 Tests  1 failed | 16 passed (17)
 
-M2 and M3: not run; no terminal output.
+M2 (actual run):
+× canBook > T01 AC4: touching after an existing booking is allowed
+× canBook > T08 AC4: touching before an existing booking is allowed
+× canBook > AC5: an available request does not change existing booking data
+Tests  3 failed | 14 passed (17)
+
+M3 (actual run):
+× canBook > T13 AC3: a blocked room is rejected
+Tests  1 failed | 16 passed (17)
 ```
 
-All three changes reverted, and the full suite run again (section 6.3): no — M3 and the final full-suite run were not completed.
+All three mutants were restored before the passing final run.
 
 ---
 
@@ -268,11 +286,11 @@ screenshot of each as `evidence/ui-1.png` … `evidence/ui-5.png`. Take **ui-4 a
 
 | # | Action | Expected observation | AC | What I observed | Pass / Fail / Not testable |
 | --- | --- | --- | --- | --- | --- |
-| U1 | Check 11:00–12:00, unblocked | Available, with the fixed sample booking | AC5 | Not checked in a browser; no screenshot saved. | Not testable |
-| U2 | Enable blocked, then check again | Unavailable replaces the earlier result | AC3, AC5 | Not checked in a browser; no screenshot saved. | Not testable |
-| U3 | Clear a required input and submit | Understandable validation feedback | AC6 | Not checked in a browser; no screenshot saved. | Not testable |
-| U4 | Use a narrow (phone) width | Controls and result remain usable | AC6 | Not checked at phone width; no screenshot saved. | Not testable |
-| U5 | Repeat the checks on the same data | Existing bookings remain unchanged | AC5 | Not checked in a browser; no screenshot saved. | Not testable |
+| U1 | Check 11:00–12:00, unblocked | Available, with the fixed sample booking | AC5 | The page showed Available and the existing 10:00–11:00 booking. Screenshot: `evidence/ui-1.png`. | Pass |
+| U2 | Enable blocked, then check again | Unavailable replaces the earlier result | AC3, AC5 | After enabling Room blocked, the result changed to Unavailable. Screenshot: `evidence/ui-2.png`. | Pass |
+| U3 | Clear a required input and submit | Understandable validation feedback | AC6 | Clearing Start and submitting showed “Fill in the current time, the start and the end.” Screenshot: `evidence/ui-3.png`. | Pass |
+| U4 | Use a narrow (phone) width | Controls and result remain usable | AC6 | At 375 px viewport width, controls stacked vertically and the result remained visible. Screenshot: `evidence/ui-4.png` (portrait). | Pass |
+| U5 | Repeat the checks on the same data | Existing bookings remain unchanged | AC5 | Repeated the available check; the displayed existing booking remained 10:00–11:00. Screenshot: `evidence/ui-5.png`. | Pass |
 
 ---
 
@@ -284,17 +302,17 @@ Use the same IDs as `known_fails` in `submission.yml`. Write `none` if the run i
 
 | Check | Why it stays |
 | --- | --- |
-| Final run / M2 / M3 / U1–U5 | The final suite and remaining mutants were not run, and the manual browser checks and screenshots were not completed. The checker was not run, so its check IDs are not known. |
+| none | All 33 checker checks pass; no failures are being kept. |
 
 ### 9.2 Original and improved suites
 
 | Measure | First suite | Improved suite |
 | --- | --- | --- |
-| Executed / passed / failed | 17 / 16 / 1 | 17 present; final run not performed |
-| Requirements with meaningful tests (AC IDs and gaps) | T01–T14 plus AC5, X1, X2; AC1–AC5 represented. AC6 is manual/UI and was not checked. | Same planned coverage; not confirmed by a final run |
-| Selected mutants detected | M1 detected by T06; M2 and M3 not run | M1 detected in the mutant run; M2/M3 unverified |
-| Accepted / revised / rejected tests | Accepted: suite structure, exact assertions and real import; revised: T06 expected value | 16 unchanged tests; T06 corrected |
-| Remaining limitations | M2/M3, final run, UI behavior and screenshots remain unverified. | No final run or UI evidence; invalid existing booking behavior is unspecified by the ACs. |
+| Executed / passed / failed | 17 / 16 / 1 | 17 / 17 / 0 |
+| Requirements with meaningful tests (AC IDs and gaps) | T01–T14 plus AC5, X1, X2; AC1–AC5 represented. AC6 was not tested in the first suite. | T01–T14 plus AC5, X1, X2; AC1–AC5 unit-tested and AC6 checked manually. |
+| Selected mutants detected | M1 detected by T06; M2 and M3 not yet tried | M1/T06, M2/T01 and T08, M3/T13 |
+| Accepted / revised / rejected tests | Accepted: suite structure, exact assertions and real import; revised: T06 expected value | Accepted tests retained; T06 corrected to match AC2. |
+| Remaining limitations | M2/M3 and UI behavior/screenshots had not yet been checked. | Unit tests cover selected fixed inputs; behavior for malformed existing bookings is not specified by the ACs. |
 
 ### 9.3 What no AC decides
 
@@ -318,6 +336,6 @@ For `bookings = [{ start: 700, end: 650 }]` and a request of 660–720, the func
      pass, M1 would have become the real behaviour." -->
 
 <!-- Write your conclusion below this line -->
-The first suite's T06 expected a 120-minute request to be rejected. I checked that expectation against AC2, which rejects a booking only when it is longer than 120 minutes, and then ran the suite: T06 failed against the correct rule. If I had changed the function to satisfy that test, M1 would have become the behavior and a valid booking would be rejected. The corrected suite expresses that boundary and contains checks for time limits, blocked rooms, overlaps, unchanged booking data and two extra cases. A green run would show that these specific assertions pass for these fixed inputs; it would not prove the page works in a browser, at phone width, or for every possible interval. M1 was detected by T06, but M2 and M3 were not run, and the final suite run and UI screenshots are still missing. One limitation is that no acceptance criterion defines what to do with malformed existing bookings. I recorded the current behavior, but the product rule still needs an explicit decision.
+The first suite's T06 expected a 120-minute request to be rejected. I checked that against AC2, which rejects bookings only when they are longer than 120 minutes, and ran the suite: T06 failed against the correct rule. Changing the function to satisfy that test would incorrectly reject a valid booking. In the corrected suite, T06 expects exactly 120 minutes to be allowed. The final run passes all 17 tests for their fixed inputs, including interval boundaries, blocked rooms, overlaps, booking-data preservation and the two extra cases. It does not prove that the page works in a browser or at phone width, and it cannot cover every possible interval. M1 was detected by T06; M2 and M3 were not run, so their detection remains unverified. The manual UI checks and screenshots are also missing. Another limitation is that no acceptance criterion defines what to do with malformed existing bookings. The current function returns true for a reversed existing booking, but that behavior needs a product decision.
 
 *AI-assisted draft; Yaroslav should review and personalize this conclusion before submission.*
