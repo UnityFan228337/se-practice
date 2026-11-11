@@ -1,85 +1,96 @@
 # SIS #04 — Report: Evolving the Smart Campus Room Availability Checker
 
-<!-- The ONLY file you write prose in. Keep every numbered heading (## 1. … ## 10.), every
-     ### sub-heading and every **Label:** word — the checker finds your answers by them.
-     Replace every "(write here)" and "(paste here)". Delete these <!-- --> comments if you like. -->
-
 ## 1. Setup and starting point
-
-<!-- Model: the exact model with its version, as the tool shows it ("ChatGPT" is a tool, not a
-     model). If the tool does not show it, write: not displayed
-     Starting point: week-08 | week-07 | sis-03 | starter   (README section 3)
-     Baseline commit: the commit that brings your starting point into sis-04/app/ UNCHANGED —
-     git rev-parse --short HEAD right after that commit. It is your "initial version". -->
 
 | Item | Value |
 | --- | --- |
-| Assistant (tool) | (write here) |
-| Assistant model | (write here) |
-| Starting point | (write here) |
-| Baseline commit | (write here) |
-| Language (ts or js) | (write here) |
-| Vitest version | (write here) |
-| Where I ran the tests | (write here) |
+| Assistant (tool) | Copilot (VS Code) |
+| Assistant model | not displayed |
+| Starting point | starter |
+| Baseline commit | e24073c |
+| Language (ts or js) | ts |
+| Vitest version | 3.2.7 |
+| Where I ran the tests | C:\Users\yar\Desktop\se\se-practice\sis-04\app |
 
 ### 1.1 Baseline run
 
-<!-- Before you change anything: run the tests of your starting point inside app/ and paste the
-     REAL output. No tests yet (starter, sis-03)? Paste the run anyway: Vitest prints
-     "No test files found". That is your honest "original" number, 0/0. -->
-
 ```text
-(paste here)
+RUN  v3.2.7 C:/Users/yar/Desktop/se/se-practice/sis-04/app
+
+No test files found, exiting with code 1
+
+include: **/*.{test,spec}.?(c|m)[jt]s?(x)
+exclude:  **/node_modules/**, **/dist/**, **/cypress/**, **/.{idea,git,cache,output,temp}/**, **/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*
 ```
 
 ## 2. Context for the assistant
 
 ### 2.1 Repository map
 
-<!-- The concise map you gave the assistant: the files that matter and one line each on what
-     they do. A tree is fine:  src/App.tsx — the page, holds the rooms and the form … -->
-
 ```text
-(paste here)
+app/package.json — project setup, React + Vite + Vitest commands
+app/src/main.tsx — app bootstrap and render
+app/src/App.tsx — page UI, current time form, room selection and booking logic
+app/src/index.css — styling for the room form and results
+starter/ — provided reference app that runs before the refactor
+README.md — assignment description and fixed requirements
 ```
 
 ### 2.2 The context message as sent
 
-<!-- The whole first message of your analysis chat: the map, AC1–AC6, F1–F5 and the constraints
-     (no login, payments, live APIs or database; fictional data only). Unedited. -->
-
 ```text
-(paste here)
+Repository map:
+- app/src/App.tsx — page UI, room dropdown, current time and booking form, `ROOMS` array and `check()` logic.
+- app/src/index.css — page styling.
+- app/src/main.tsx — mounts the app.
+- app/package.json — Vite + Vitest commands.
+- README.md — fixed requirements and grading constraints.
+
+AC1–AC6:
+- AC1: reject start >= end and requests in the past.
+- AC2: reject requests longer than 120 minutes.
+- AC3: reject a blocked room.
+- AC4: reject overlaps; touching endpoints is allowed.
+- AC5: return Available/Unavailable without changing booking data.
+- AC6: responsive and clear feedback.
+
+F1–F5:
+- F1: room capacity must be >= requested attendees.
+- F2: room must include all chosen equipment items.
+- F3: blocked room cannot be reported available.
+- F4: empty state when no rooms match.
+- F5: changing the selected room refreshes the availability result.
+
+Constraints:
+- no login, payments, live APIs or database
+- fictional data only
+- keep the room catalog and filtering in separate modules
+- do not rewrite the app, only refactor and extend it in small steps
+
+Please assess maintenance risks in the current starter and give a small, safe plan. No code yet.
 ```
 
 ## 3. Codebase analysis (Task 1)
 
 ### 3.1 Maintainability risks
 
-<!-- At least three, found in YOUR starting code. "Where" names a file or a function(),
-     e.g. src/App.tsx, check(). Evidence is what you saw, not what the assistant said.
-     Priority: High / Medium / Low. -->
-
 | # | Risk | Where (file / function) | Evidence | Priority |
 | --- | --- | --- | --- | --- |
-| 1 | (write here) | (write here) | (write here) | High / Medium / Low |
-| 2 | (write here) | (write here) | (write here) | High / Medium / Low |
-| 3 | (write here) | (write here) | (write here) | High / Medium / Low |
+| 1 | The room-specific blocked flag is stored in the page, not in the room catalog. | `app/src/App.tsx`, `check()` | The page has a separate `blocked` checkbox and `const room = ROOMS.find(...)`; a selected room can be blocked or not based on UI state, which breaks the idea that each room owns its own status. | High |
+| 2 | Availability rules are mixed with the page logic. | `app/src/App.tsx`, `check()` | A single function validates time, duration, blocked status, overlap, and writes the result; this makes AC1–AC5 harder to test and refactor without changing the UI. | High |
+| 3 | Room catalog data lives inside the page component. | `app/src/App.tsx` | `ROOMS` is created inside the component file, so the app stores data and form logic together instead of separating the catalog from view logic. | Medium |
 
 ### 3.2 Improvement plan — before editing
 
-<!-- Numbered, in the order you will do it, smallest safe step first. Written BEFORE you change
-     code: the commit that adds this section comes before the commit that changes app/src. -->
-
-1. (write here)
-2. (write here)
-3. (write here)
+1. Split the room data into its own `src/rooms.ts` module and keep the catalog separate from the UI.
+2. Move the booking rules into `src/booking.ts` and keep `canBook()` responsible for AC1–AC5, while `checkRoom()` uses the selected room.
+3. Add `src/filter.ts` with `filterRooms()` for F1–F2 and then test the catalog, booking logic, and the integration between filter and room selection.
 
 ### 3.3 One AI suggestion I rejected or modified
 
 | Suggestion (as the assistant made it) | Decision | Why — with the AC, F-rule, test or file behind it |
 | --- | --- | --- |
-| (write here) | Rejected / Modified | (write here) |
+| “Use `equipment.some()` in `filterRooms()` so any selected item matches.” | Rejected | F2 requires all equipment items, not any; using `some()` would incorrectly let a room match `projector + whiteboard` if it only has one of them. This is covered by the requirement and by the F2 test we will add. |
 
 ## 4. Feature extension (Task 2)
 
