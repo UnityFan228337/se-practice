@@ -1,0 +1,1 @@
+What exact start and end times do you need, what is the current time, is the room blocked, and what bookings already exist?
