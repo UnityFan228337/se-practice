@@ -1,0 +1,55 @@
+# SIS #04 — the declaration. FACTS ONLY: every explanation stays in report.md.
+#
+# Fill this in LAST, after your final run of the checker, then validate it:
+#     python tests/check_sis.py
+#     python tests/validate_submission.py
+#
+# Your checker numbers are re-run by the instructor at the head of your pull request.
+# Numbers that do not match what that commit produces cost the whole workflow criterion.
+# A FAIL you report honestly — here and under known_fails — costs nothing extra.
+#
+# Format rules: two spaces for indentation, never tabs. Leave the keys exactly as they are.
+
+schema: 1
+assignment: "sis-04"            # do not edit
+
+student:
+  name: "Yaroslav"
+  student_id: "00A000000"
+  group: "SIS-04"
+  github: "yar"
+
+assistant:
+  tool: "Copilot (VS Code)"
+  model: "not displayed"
+
+project:
+  start_from: "starter"
+  baseline_commit: "e24073c"
+  language: "ts"
+  vitest: "3.2.7"
+
+counts:
+  rooms: 5
+  tests_original: 0
+  tests_final: 15
+  risks: 3
+  exchanges: 3
+
+checker:
+  pass: 33
+  fail: 0
+  error: 0
+  commit: "d9c20bf"
+  known_fails: []
+
+review_findings:
+  - "F2: the assistant suggested equipment.some(), so a room with only a projector could match projector + whiteboard; the F2 test caught it"
+  - "AC1: the UI initially duplicated time-order checks instead of delegating to canBook, and the refactor removed that repeat"
+  - "INT: the selected-room result needed to refresh when the room changed, and the integration test covers that behavior"
+
+honesty:
+  baseline_unchanged: "yes"
+  runs_unedited: "yes"
+  no_invented_metrics: "yes"
+  ai_usage_disclosed: "yes"

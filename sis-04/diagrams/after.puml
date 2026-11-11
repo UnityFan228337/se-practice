@@ -1,0 +1,19 @@
+@startuml
+skinparam componentStyle rectangle
+left to right direction
+
+component "App.tsx" as App
+component "rooms.ts" as Rooms
+component "booking.ts" as Booking
+component "filter.ts" as Filter
+component "index.css" as CSS
+component "main.tsx" as Main
+
+Main --> App
+App --> Rooms : imports ROOMS
+App --> Booking : imports canBook, checkRoom
+App --> Filter : imports filterRooms
+App --> CSS : renders UI and feedback
+Booking --> Rooms : reads room.blocked + room.bookings
+Filter --> Rooms : reads room.capacity + room.equipment
+@enduml
