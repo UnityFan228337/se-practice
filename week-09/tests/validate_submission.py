@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-validate_submission.py - checks the shape of week-07/submission.yml. DO NOT EDIT.
+validate_submission.py - checks the shape of week-09/submission.yml. DO NOT EDIT.
 
-    python tests/validate_submission.py                # from inside week-07/
+    python tests/validate_submission.py                # from inside week-09/
     python tests/validate_submission.py --json         # machine-readable, for the grading pipeline
     python tests/validate_submission.py --file path/to/submission.yml
 
 It checks SHAPE, never QUALITY. A green run means the file can be read and graded, not that
-the work is good. It runs tests/check_suite.py itself, so the numbers you declare are compared
+the work is good. It runs tests/check_tool.py itself, so the numbers you declare are compared
 with a real run, and the number of checks is never typed in by hand.
 
-Verdicts, same vocabulary as check_suite.py:
+Verdicts, same vocabulary as check_tool.py:
     PASS   the field is present and well-formed
     FAIL   the field is present but wrong
     ERROR  the field is absent, or the checker could not be run to compare with
@@ -29,13 +29,13 @@ import re
 import subprocess
 import sys
 
-CHECKER = os.path.join("tests", "check_suite.py")
+CHECKER = os.path.join("tests", "check_tool.py")
 
 STUDENT_ID = re.compile(r"^\d{2}[A-Za-z]\d{6}$")
 GITHUB_LOGIN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$")
 SHORT_SHA = re.compile(r"^[0-9a-fA-F]{7,40}$")
-CHECK_ID = re.compile(r"^[ASRMUL]\d{1,2}$")
-NAMES_SOMETHING = re.compile(r"\bAC\s?-?[1-6]\b|\bT(?:0[1-9]|1[0-4])\b|\bX[12]\b|\bM[1-3]\b|\b[\w/.-]+\.(?:[cm]?[jt]sx?|vue|svelte|html|css)\b", re.I)
+CHECK_ID = re.compile(r"^(?:D[1-6]|S(?:0[1-9]|1[0-2])|F[1-7]|L[1-5])$")
+NAMES_SOMETHING = re.compile(r"\bS(?:0[1-9]|1[0-2])\b|\bR[1-3]\b|\bA[1-8]\b|\bAC\s?-?[1-6]\b|\b(?:start|end|now|blocked|bookings)\b|\b[\w/.-]+\.(?:json|txt|md)\b", re.I)
 PLACEHOLDER = re.compile(r"(^<.*>$)|(\bTODO\b)|(\bFIXME\b)|(\byour name\b)|(^\.\.\.$)", re.I)
 
 BARE_TOOL_NAMES = {
@@ -43,9 +43,9 @@ BARE_TOOL_NAMES = {
     "deepseek", "grok", "mistral", "llama", "qwen", "perplexity", "cursor", "lovable", "v0",
 }
 NOT_DISPLAYED = ("not displayed", "not-displayed")
-HONESTY = ("first_suite_unedited", "outputs_unedited", "mutants_restored", "ai_usage_disclosed")
-INVALID_EXISTING = ("returns-true", "returns-false", "throws")
-BASELINES = ("week-06", "starter")
+HONESTY = ("definition_written_by_me", "calls_unedited", "outputs_unedited", "ai_usage_disclosed")
+YESNO = ("yes", "no")
+R3 = ("asked", "called")
 
 TITLES = {
     "D1": "schema and week",
@@ -54,13 +54,13 @@ TITLES = {
     "D4": "student.github",
     "D5": "assistant.tool",
     "D6": "assistant.model is an exact model name or not displayed",
-    "D7": "project: baseline, Bolt link, Vitest version",
+    "D7": "assistant.fresh_chats is yes or no",
     "D8": "checker numbers add up",
     "D9": "checker numbers match a run made now",
     "D10": "checker.commit",
     "D11": "known_fails lists exactly what still fails",
-    "D12": "counts match the files and lab-report.md",
-    "D13": "assumptions.invalid_existing_booking is decided",
+    "D12": "calls.first_run_s_fails is 0-12",
+    "D13": "calls.r3 matches the file in calls/",
     "D14": "review_findings: three, each naming what it is about",
     "D15": "honesty block answered",
 }
@@ -219,13 +219,12 @@ def validate(doc, folder):
     rep = Report()
     run = run_checker(folder)
     now = run.get("counts") if run else None
-    measured = (run or {}).get("measured") or {}
 
     # D1
     schema, week = get(doc, "schema"), get(doc, "week")
-    ok = str(schema) == "1" and str(week) == "07"
+    ok = str(schema) == "1" and str(week) == "09"
     rep.add("D1", "PASS" if ok else "FAIL",
-            "schema 1, week 07" if ok else "schema must be 1 and week must be \"07\" (got %r, %r)"
+            "schema 1, week 09" if ok else "schema must be 1 and week must be \"09\" (got %r, %r)"
             % (None if schema is KeyError else schema, None if week is KeyError else week))
 
     # D2-D5
@@ -243,27 +242,14 @@ def validate(doc, folder):
                    if v.lower() in BARE_TOOL_NAMES or not re.search(r"\d", v) else None))
 
     # D7
-    probs = []
-    base = get(doc, "project.baseline")
-    if base not in BASELINES:
-        probs.append("project.baseline must be week-06 or starter")
-    url = get(doc, "project.bolt_url")
-    if not (isinstance(url, str) and (url.strip().lower() == "not-shared" or re.match(r"^https://\S+\.\S+", url.strip()))):
-        probs.append("project.bolt_url must be an https:// link or: not-shared")
-    vit = get(doc, "project.vitest")
-    vm = re.search(r"(\d+\.\d+(?:\.\d+)?)", vit) if isinstance(vit, str) else None
-    seen = measured.get("vitest_version")
-    if not vm:
-        probs.append("project.vitest must be the version from the RUN line, e.g. 3.2.4")
-    elif seen and not (str(seen).startswith(vm.group(1)) or vm.group(1).startswith(str(seen))):
-        probs.append("project.vitest says %s, lab-report.md says %s" % (vm.group(1), seen))
-    rep.add("D7", "FAIL" if probs else "PASS",
-            "; ".join(probs) if probs else "%s, Vitest %s" % (base, vm.group(1)))
+    fc = get(doc, "assistant.fresh_chats")
+    rep.add("D7", "PASS" if fc in YESNO else "FAIL",
+            "fresh_chats: %s" % fc if fc in YESNO else "assistant.fresh_chats must be yes or no")
 
     # D8-D9
     nums = {k: as_int(get(doc, "checker." + k)) for k in ("pass", "fail", "error")}
     if now is None:
-        rep.add("D8", "ERROR", "tests/check_suite.py could not be run - is it next to this file, unedited?")
+        rep.add("D8", "ERROR", "tests/check_tool.py could not be run - is it next to this file, unedited?")
         rep.add("D9", "ERROR", "no checker run to compare with")
     elif any(v is None for v in nums.values()):
         rep.add("D8", "FAIL", "checker.pass / fail / error must all be whole numbers")
@@ -293,7 +279,7 @@ def validate(doc, folder):
     if known is KeyError:
         rep.add("D11", "ERROR", "checker.known_fails: the key is missing - write [] if nothing fails")
     elif not isinstance(known, list):
-        rep.add("D11", "FAIL", "known_fails must be a list on one line, e.g. [U2] or []")
+        rep.add("D11", "FAIL", "known_fails must be a list on one line, e.g. [E1] or []")
     elif run is None:
         rep.add("D11", "ERROR", "no checker run to compare with")
     else:
@@ -308,25 +294,23 @@ def validate(doc, folder):
             rep.add("D11", "PASS", "known_fails matches the checker: %s" % (listed or "[]"))
 
     # D12
-    probs = []
-    first_run = measured.get("first_run") or {}
-    pairs = (("tests_first", measured.get("tests_first")), ("tests_final", measured.get("tests_final")),
-             ("first_run_failed", first_run.get("failed") if first_run else None),
-             ("review_decisions", measured.get("review_decisions")),
-             ("mutants_detected", measured.get("mutants_detected")))
-    for key, found in pairs:
-        value = as_int(get(doc, "counts." + key))
-        if value is None:
-            probs.append("counts.%s must be a whole number" % key)
-        elif found is not None and found != value:
-            probs.append("counts.%s says %d, your files say %d" % (key, value, found))
-    rep.add("D12", "FAIL" if probs else "PASS", "; ".join(probs) if probs else "counts filled and match")
+    n = as_int(get(doc, "calls.first_run_s_fails"))
+    rep.add("D12", "PASS" if n is not None and 0 <= n <= 12 else "FAIL",
+            "first_run_s_fails: %s" % n if n is not None and 0 <= n <= 12
+            else "calls.first_run_s_fails must be a whole number from 0 to 12 (your FIRST run, section 3)")
 
     # D13
-    decision = get(doc, "assumptions.invalid_existing_booking")
-    rep.add("D13", "PASS" if decision in INVALID_EXISTING else "FAIL",
-            "invalid_existing_booking: %s" % decision if decision in INVALID_EXISTING
-            else "assumptions.invalid_existing_booking must be one of: " + " | ".join(INVALID_EXISTING))
+    r3 = get(doc, "calls.r3")
+    calls = os.path.join(folder, "calls")
+    has_json = os.path.isfile(os.path.join(calls, "r3.json"))
+    has_txt = os.path.isfile(os.path.join(calls, "r3.txt"))
+    if r3 not in R3:
+        rep.add("D13", "FAIL", "calls.r3 must be asked or called")
+    elif (r3 == "asked" and has_txt and not has_json) or (r3 == "called" and has_json and not has_txt):
+        rep.add("D13", "PASS", "r3: %s, and calls/ agrees" % r3)
+    else:
+        rep.add("D13", "FAIL", "calls.r3 says %s, but calls/ holds %s" % (
+            r3, ", ".join(p for p, h in (("r3.json", has_json), ("r3.txt", has_txt)) if h) or "neither r3 file"))
 
     # D14
     findings = get(doc, "review_findings")
@@ -335,8 +319,8 @@ def validate(doc, folder):
     ok = len(findings) >= 3 and not weak
     rep.add("D14", "PASS" if ok else "FAIL",
             "%d review findings" % len(findings) if ok
-            else "review_findings needs 3 or more lines, each naming a case (T01-T14, X1, X2), an AC, a mutant "
-                 "(M1-M3) or a file (found %d, %d too thin)" % (len(findings), len(weak)))
+            else "review_findings needs 3 or more lines, each naming a case (S01-S12), a request (R1-R3), "
+                 "an action (A1-A8), an AC, a field or a file (found %d, %d too thin)" % (len(findings), len(weak)))
 
     # D15
     missing = [k for k in HONESTY if get(doc, "honesty." + k) not in ("yes", "no")]
@@ -349,7 +333,7 @@ def validate(doc, folder):
 
 
 def print_human(rep, path):
-    print("Week 07 submission.yml - shape only, never quality   (%s)\n" % path)
+    print("Week 09 submission.yml - shape only, never quality   (%s)\n" % path)
     width = max(len(r["title"]) for r in rep.rows)
     for r in rep.rows:
         print(("%-6s %-4s %-*s  %s" % (r["verdict"], r["id"], width, r["title"], r["message"])).rstrip())
@@ -359,17 +343,17 @@ def print_human(rep, path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate week-07/submission.yml")
+    parser = argparse.ArgumentParser(description="Validate week-09/submission.yml")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--file", default="submission.yml")
     args = parser.parse_args()
 
     if args.file == "submission.yml" and not os.path.exists("submission.yml") and not os.path.isdir("tests"):
-        msg = "run this from inside your week-07/ folder:  cd week-07 && python tests/validate_submission.py"
+        msg = "run this from inside your week-09/ folder:  cd week-09 && python tests/validate_submission.py"
         print(json.dumps({"ok": False, "error": msg}) if args.json else "ERROR: " + msg)
         return 3
     if not os.path.exists(args.file):
-        msg = "%s not found - copy it from the week-07 folder you were given" % args.file
+        msg = "%s not found - copy it from the week-09 folder you were given" % args.file
         print(json.dumps({"ok": False, "error": msg}) if args.json else "ERROR: " + msg)
         return 2
     try:
@@ -396,12 +380,11 @@ def main():
                 "github": val("student.github"),
                 "tool": val("assistant.tool"),
                 "model": val("assistant.model"),
-                "project": val("project"),
+                "fresh_chats": val("assistant.fresh_chats"),
+                "calls": val("calls"),
                 "commit": val("checker.commit"),
                 "checker": {k: as_int(val("checker." + k)) for k in ("pass", "fail", "error")},
                 "known_fails": val("checker.known_fails"),
-                "counts": val("counts"),
-                "assumptions": val("assumptions"),
                 "findings": val("review_findings"),
             },
         }, ensure_ascii=False, indent=2))
