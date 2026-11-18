@@ -10,7 +10,6 @@ type Room = { id: string; name: string; blocked: boolean; bookings: Interval[] }
 
 const ROOMS: Room[] = [
   { id: 'a101', name: 'Room A-101', blocked: false, bookings: [{ start: 600, end: 660 }] },
-  { id: 'b204', name: 'Room B-204', blocked: false, bookings: [] },
 ];
 
 const toMinutes = (value: string) => {
