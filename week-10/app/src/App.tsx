@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { canBook } from './booking';
+import { evaluateAvailability } from './booking';
 
 // Starter for students with no Week 06 project. The availability decision lives INSIDE this
 // component on purpose: Task 1 of Practice #07 is to extract it into src/booking.ts as
@@ -40,13 +40,9 @@ export default function App() {
     const s = toMinutes(start);
     const e = endOfDay ? 1440 : toMinutes(end);
     const n = toMinutes(now);
-    if (!(s < e)) {
-      setError('The end time must be after the start time.');
-    } else {
-      setError('');
-    }
-
-    setResult(canBook({ start: s, end: e, now: n, blocked, bookings: room.bookings }));
+    const availability = evaluateAvailability({ start: s, end: e, now: n, blocked, bookings: room.bookings });
+    setError(availability.error);
+    setResult(availability.result);
   }
 
   return (
