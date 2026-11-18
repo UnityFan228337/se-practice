@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { canBook } from './booking';
+import * as booking from './booking';
 
 const fixture = () => ({
   now: 540,
@@ -83,5 +84,12 @@ describe('canBook', () => {
       end: 730,
       bookings: [{ start: 600, end: 660 }, { start: 720, end: 780 }],
     })).toBe(false);
+  });
+
+  test('R1 AC6: an invalid interval reports an error without an unavailable result', () => {
+    expect(booking.evaluateAvailability({ ...fixture(), start: 660, end: 600 })).toEqual({
+      result: null,
+      error: 'The end time must be after the start time.',
+    });
   });
 });
