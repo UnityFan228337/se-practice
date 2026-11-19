@@ -1,8 +1,8 @@
 # Week 10 — Lab report
 
 **Name:** Yaroslav
-**Group:** not recorded in the workspace
-**Date:** 19 November 2026
+**Group:** [CSCI-2208] Software Engineering - Fall 2026
+**Date:** 19.11.2026
 
 Fill in every section. **Do not delete, rename or renumber the headings.** The checker and the
 grader find your answers by them. You can add rows to any table, but never remove its header.
