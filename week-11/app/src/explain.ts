@@ -56,7 +56,7 @@ function validateInput(input: ExplainInput): string | null {
   if (!input || typeof input.roomLabel !== 'string') return 'Invalid room label.';
   const label = input.roomLabel.trim();
   if (label.length < 1 || label.length > 60) return 'Invalid room label.';
-  if (!TIME_PATTERN.test(input.start) || !TIME_PATTERN.test(input.end)) return 'Invalid time.';
+  if (!TIME_PATTERN.test(input.start) || (!TIME_PATTERN.test(input.end) && input.end !== '24:00')) return 'Invalid time.';
   if (typeof input.isAvailable !== 'boolean') return 'Invalid availability.';
   if (!reasonCodes.has(input.reasonCode)) return 'Invalid reason code.';
   return null;

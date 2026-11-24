@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { evaluateAvailability } from './booking';
+import { availabilityReason, evaluateAvailability } from './booking';
+import { explainAvailability, mockAdapter } from './explain';
 
 // Starter for students with no Week 06 project. The availability decision lives INSIDE this
 // component on purpose: Task 1 of Practice #07 is to extract it into src/booking.ts as
@@ -27,11 +28,14 @@ export default function App() {
   const [endOfDay, setEndOfDay] = useState(false);
   const [result, setResult] = useState<boolean | null>(null);
   const [error, setError] = useState('');
+  const [explanation, setExplanation] = useState('');
+  const [explaining, setExplaining] = useState(false);
 
   const room = ROOMS.find(r => r.id === roomId)!;
 
-  function check() {
+  async function check() {
     setResult(null);
+    setExplanation('');
     if (!start || !now || (!end && !endOfDay)) {
       setError('Fill in the current time, the start and the end.');
       return;
@@ -42,6 +46,23 @@ export default function App() {
     const availability = evaluateAvailability({ start: s, end: e, now: n, blocked, bookings: room.bookings });
     setError(availability.error);
     setResult(availability.result);
+    if (availability.result !== null) {
+      const reasonCode = availabilityReason({ start: s, end: e, now: n, blocked, bookings: room.bookings });
+      setExplaining(true);
+      const response = await explainAvailability(
+        {
+          roomLabel: room.name,
+          start,
+          end: endOfDay ? '24:00' : end,
+          isAvailable: availability.result,
+          reasonCode,
+        },
+        mockAdapter,
+        1500,
+      );
+      setExplanation(response.explanation);
+      setExplaining(false);
+    }
   }
 
   return (
@@ -63,6 +84,13 @@ export default function App() {
       {error && <p className="error">{error}</p>}
       {result !== null && (
         <p className={`result ${result ? 'available' : 'unavailable'}`}>{result ? 'Available' : 'Unavailable'}</p>
+      )}
+      {result !== null && (
+        <section className="explanation" aria-live="polite">
+          <strong>Generated explanation (mock)</strong>
+          <p>{explaining ? 'Preparing explanation...' : explanation}</p>
+          <small>Not a booking decision.</small>
+        </section>
       )}
       <h2>Existing bookings</h2>
       <ul>{room.bookings.length ? room.bookings.map((b, i) => <li key={i}>{fmt(b.start)}–{fmt(b.end)}</li>) : <li>none</li>}</ul>
