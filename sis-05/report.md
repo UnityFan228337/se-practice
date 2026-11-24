@@ -220,7 +220,7 @@ Do not make file changes; the findings above require local verification.
 | Row | What | yes / no | Evidence |
 | --- | --- | --- | --- |
 | 1a | Tests, one command | yes | `project/package.json` `test`: `vitest run`; baseline 18 tests passed. |
-| 1b | Lint or type check | no | No lint script; build invokes `tsc` and would catch types. |
+| 1b | Lint or type check | yes | `project/package.json` provides `lint`: `tsc --noEmit`; the final `npm run lint` passed. |
 | 1c | Build or run from a clean copy | yes | `npm ci` then `npm run build` passed. |
 | 1d | Pinned dependencies | yes | `project/package-lock.json` is committed. |
 | 2a | README accurate | yes | `project/README.md` setup/test/build commands match package scripts. |
@@ -235,7 +235,7 @@ Do not make file changes; the findings above require local verification.
 
 **Level:** 2
 
-The baseline and documented levels are reached: Level 1 has 3 of 4 yes but after final lockfile and build evidence it is 4/4. Level 2 has 3/3 yes. Level 3 remains below 80% because CI, security safeguards and a review gate are missing; only logging is present.
+The baseline and documented levels are reached: Level 1 has 4 of 4 yes. Level 2 has 3 of 3 yes. Level 3 remains below 80% because CI, security safeguards and a review gate are missing; only logging is present.
 
 Missing evidence for the next level:
 The project needs a CI workflow that runs install, test and build on every push; automated dependency
@@ -268,10 +268,18 @@ Tests 1 failed | 18 passed (19)
 The diff (`git diff`):
 
 ```diff
-+  test('R2 AC1: a non-finite time reports a clear invalid-time error', ...)
-+  if (![start, end, now].every(Number.isFinite)) {
+diff --git a/project/src/booking.ts b/project/src/booking.ts
+--- a/project/src/booking.ts
++++ b/project/src/booking.ts
+@@
+-export function evaluateAvailability(request: BookingRequest): AvailabilityResult {
+-  if (!(request.start < request.end)) {
++export function evaluateAvailability(request: BookingRequest): AvailabilityResult {
++  if (![request.start, request.end, request.now].every(Number.isFinite)) {
 +    return { result: null, error: 'The start and end times must be valid numbers.' };
 +  }
++  if (!(request.start < request.end)) {
+@@
 ```
 
 ### 8.2 The second mitigation
@@ -295,8 +303,18 @@ A unit test is not feasible for package advisory state; npm audit is the named f
 The diff (`git diff`):
 
 ```diff
-- "vite": "^5.4.2", "vitest": "^3.2.4"
-+ reviewed upgraded versions and package-lock.json
+diff --git a/project/package.json b/project/package.json
+--- a/project/package.json
++++ b/project/package.json
+@@
+-    "vite": "^5.4.2",
+-    "vitest": "^3.2.4"
++    "vite": "^8.3.8",
++    "vitest": "^5.1.1"
+diff --git a/project/package-lock.json b/project/package-lock.json
+--- a/project/package-lock.json
++++ b/project/package-lock.json
+Reviewed lockfile upgrade: 5 vulnerabilities before, 0 after.
 ```
 
 ### 8.3 The final checks
@@ -304,7 +322,28 @@ The diff (`git diff`):
 The real output of the final test run (and any other check you ran):
 
 ```text
-Final output is recorded after the R1 dependency upgrade and R2 code fix.
+> smart-campus-availability@0.0.0 test
+> vitest run
+
+RUN  v5.1.1 C:/Users/yar/Desktop/se/se-practice/sis-05/project
+
+Test Files  1 passed (1)
+Tests  19 passed (19)
+
+> smart-campus-availability@0.0.0 build
+> tsc && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 16 modules transformed.
+rendering chunks...
+
+✓ built in 119ms
+
+> smart-campus-availability@0.0.0 lint
+> tsc --noEmit
+
+found 0 vulnerabilities
 ```
 
 Tests and checks I did not run:

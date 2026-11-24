@@ -28,6 +28,7 @@ Run `npm ci` from `sis-05/project/`, then use the commands below.
 - Install only after review: `npm ci`
 - Dev server: `npm run dev`
 - Tests: `npm test`
+- Lint/type check: `npm run lint`
 - Build: `npm run build`
 
 ## Coding conventions

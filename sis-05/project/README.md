@@ -14,6 +14,7 @@ npm ci
 
 ```text
 npm test
+npm run lint
 npm run build
 npm run dev
 ```
