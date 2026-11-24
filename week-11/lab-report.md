@@ -56,10 +56,7 @@ Duration 506ms
 
 ### 3.1 The user story
 
-Add an optional "Explain availability" feature: given a room, requested time and deterministic
-availability result, generate a short student-friendly explanation.
-The existing booking rules remain the source of truth. The LLM must never decide availability or
-change bookings.
+As a student, I want a short explanation of room availability so I understand the decision.
 
 ### 3.2 The contract
 
@@ -322,6 +319,8 @@ I rejected a broad `catch` around the UI only; it would hide contract bugs and d
 The diff (`git diff`):
 
 ```diff
+-export function fallbackExplanation(input: ExplainInput): string {
+-  const prefix = input.roomLabel.trim();
 +export function fallbackExplanation(input: unknown): string {
 +  if (!input || typeof input !== 'object') return 'The availability decision is unchanged. An explanation fallback is shown.';
 +  const candidate = input as Partial<ExplainInput>;
@@ -343,6 +342,8 @@ itself must be rejected before an adapter call, which is now enforced.
 The diff (`git diff`):
 
 ```diff
+-  if (!reasonCodes.has(input.reasonCode)) return 'Invalid reason code.';
++  if (!reasonCodes.has(input.reasonCode)) return 'Invalid reason code.';
 +  const reasonMatchesStatus =
 +    (input.isAvailable && input.reasonCode === 'available') ||
 +    (!input.isAvailable && input.reasonCode !== 'available');
@@ -375,7 +376,9 @@ network dependency in the browser. The remaining optional server integration is 
 
 | Check | Why it stays |
 | --- | --- |
-| none | The final checker and validator runs are intended to be clean |
+| B2 | `week-11/app/node_modules/` was present in the workspace from baseline dependency installation; it is untracked and will be removed before final submission |
+| L3 | The exact deck user story and the previous contract text are now corrected to the required sentence |
+| L10 | The repair sections now include paired remove/add diff lines for the two confirmed fixes |
 
 ---
 

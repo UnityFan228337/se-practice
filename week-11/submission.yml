@@ -39,11 +39,11 @@ decision:
   demo_ready: yes
 
 checker:
-  pass: 27
-  fail: 0
+  pass: 24
+  fail: 3
   error: 0
-  commit: 24d2d9b
-  known_fails: []
+  commit: 498e915
+  known_fails: [B2, L3, L10]
 
 review_findings:
   - "V1: malformed explain.ts input could crash the fallback"
