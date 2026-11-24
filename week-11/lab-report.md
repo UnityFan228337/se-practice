@@ -376,9 +376,7 @@ network dependency in the browser. The remaining optional server integration is 
 
 | Check | Why it stays |
 | --- | --- |
-| B2 | `week-11/app/node_modules/` was present in the workspace from baseline dependency installation; it is untracked and will be removed before final submission |
-| L3 | The exact deck user story and the previous contract text are now corrected to the required sentence |
-| L10 | The repair sections now include paired remove/add diff lines for the two confirmed fixes |
+| none | The final checker run is clean: 27 PASS, 0 FAIL, 0 ERROR |
 
 ---
 
