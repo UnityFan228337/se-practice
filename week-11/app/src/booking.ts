@@ -13,17 +13,29 @@ export type AvailabilityResult = {
   error: string;
 };
 
-export function canBook({ start, end, now, blocked, bookings }: BookingRequest): boolean {
-  if (!(0 <= start && start < end && end <= 1440)) return false;
-  if (!(start > now)) return false;
-  if (end - start > 120) return false;
-  if (blocked) return false;
+export type AvailabilityReason =
+  | 'available'
+  | 'invalid_time'
+  | 'past_time'
+  | 'too_long'
+  | 'room_blocked'
+  | 'overlap';
+
+export function availabilityReason({ start, end, now, blocked, bookings }: BookingRequest): AvailabilityReason {
+  if (!(0 <= start && start < end && end <= 1440)) return 'invalid_time';
+  if (!(start > now)) return 'past_time';
+  if (end - start > 120) return 'too_long';
+  if (blocked) return 'room_blocked';
 
   for (const booking of bookings) {
-    if (start < booking.end && end > booking.start) return false;
+    if (start < booking.end && end > booking.start) return 'overlap';
   }
 
-  return true;
+  return 'available';
+}
+
+export function canBook(request: BookingRequest): boolean {
+  return availabilityReason(request) === 'available';
 }
 
 export function evaluateAvailability(request: BookingRequest): AvailabilityResult {
