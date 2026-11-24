@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-validate_submission.py - checks the shape of week-10/submission.yml. DO NOT EDIT.
+validate_submission.py - checks the shape of week-11/submission.yml. DO NOT EDIT.
 
-    python tests/validate_submission.py                # from inside week-10/
+    python tests/validate_submission.py                # from inside week-11/
     python tests/validate_submission.py --json         # machine-readable, for the grading pipeline
     python tests/validate_submission.py --file path/to/submission.yml
 
 It checks SHAPE, never QUALITY. A green run means the file can be read and graded, not that
-the work is good. It runs tests/check_audit.py itself, so the numbers you declare are compared
+the work is good. It runs tests/check_feature.py itself, so the numbers you declare are compared
 with a real run, and the number of checks is never typed in by hand.
 
-Verdicts, same vocabulary as check_audit.py:
+Verdicts, same vocabulary as check_feature.py:
     PASS   the field is present and well-formed
     FAIL   the field is present but wrong
     ERROR  the field is absent, or the checker could not be run to compare with
@@ -29,13 +29,13 @@ import re
 import subprocess
 import sys
 
-CHECKER = os.path.join("tests", "check_audit.py")
+CHECKER = os.path.join("tests", "check_feature.py")
 
 STUDENT_ID = re.compile(r"^\d{2}[A-Za-z]\d{6}$")
 GITHUB_LOGIN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$")
 SHORT_SHA = re.compile(r"^[0-9a-fA-F]{7,40}$")
-CHECK_ID = re.compile(r"^(?:[BSE][12]|A[1-3]|C[1-6]|R[1-3]|L(?:[1-9]|1[0-3]))$")
-NAMES_SOMETHING = re.compile(r"\bR\d{1,2}\b|\bC[1-6]\b|\bAC\s?-?[1-6]\b|\b[123][a-e]\b|\b(?:AGENTS|README)\.md\b|\b[\w/.-]+\.(?:[cm]?[jt]sx?|json|md|ya?ml)\b", re.I)
+CHECK_ID = re.compile(r"^(?:[BSE][12]|X[1-6]|R[1-3]|L(?:[1-9]|1[0-2]))$")
+NAMES_SOMETHING = re.compile(r"\bV\d{1,2}\b|\bE[1-9]\b|\bF[1-5]\b|\bAC\s?-?[1-6]\b|\b(?:invalid_time|past_time|too_long|room_blocked|overlap)\b|\b(?:AGENTS|README)\.md\b|\b[\w/.-]+\.(?:[cm]?[jt]sx?|json|md|ya?ml)\b", re.I)
 PLACEHOLDER = re.compile(r"(^<.*>$)|(\bTODO\b)|(\bFIXME\b)|(\byour name\b)|(^\.\.\.$)", re.I)
 
 BARE_TOOL_NAMES = {
@@ -43,11 +43,12 @@ BARE_TOOL_NAMES = {
     "deepseek", "grok", "mistral", "llama", "qwen", "perplexity", "cursor", "lovable", "v0",
 }
 NOT_DISPLAYED = ("not displayed", "not-displayed")
-HONESTY = ("review_was_read_only", "agents_patch_approved_by_me", "outputs_unedited", "ai_usage_disclosed")
+HONESTY = ("changes_reviewed_by_me", "no_key_in_browser", "review_was_read_only", "outputs_unedited",
+           "ai_usage_disclosed")
 ENVIRONMENTS = ("bolt", "claude-code", "cursor", "copilot", "chat", "other")
-STARTS = ("week-08", "week-07")
+STARTS = ("week-10", "week-08")
 LANGUAGES = ("ts", "js")
-RELEASES = ("go", "conditional", "no-go")
+ADAPTERS = ("mock", "mock-and-server")
 
 TITLES = {
     "D1": "schema and week",
@@ -56,13 +57,13 @@ TITLES = {
     "D4": "student.github",
     "D5": "assistant.tool",
     "D6": "assistant.model is an exact model name or not displayed",
-    "D7": "assistant.environment and project",
+    "D7": "environment, reviewer, project and feature",
     "D8": "checker numbers add up",
     "D9": "checker numbers match a run made now",
     "D10": "checker.commit",
     "D11": "known_fails lists exactly what still fails",
     "D12": "counts match the files and lab-report.md",
-    "D13": "audit and decision match lab-report.md",
+    "D13": "decision matches lab-report.md",
     "D14": "review_findings: three, each naming what it is about",
     "D15": "honesty block answered",
 }
@@ -225,9 +226,9 @@ def validate(doc, folder):
 
     # D1
     schema, week = get(doc, "schema"), get(doc, "week")
-    ok = str(schema) == "1" and str(week) == "10"
+    ok = str(schema) == "1" and str(week) == "11"
     rep.add("D1", "PASS" if ok else "FAIL",
-            "schema 1, week 10" if ok else "schema must be 1 and week must be \"10\" (got %r, %r)"
+            "schema 1, week 11" if ok else "schema must be 1 and week must be \"11\" (got %r, %r)"
             % (None if schema is KeyError else schema, None if week is KeyError else week))
 
     # D2-D5
@@ -249,9 +250,19 @@ def validate(doc, folder):
     env = get(doc, "assistant.environment")
     if env not in ENVIRONMENTS:
         probs.append("assistant.environment must be one of: " + " | ".join(ENVIRONMENTS))
+    rtool, rmodel = get(doc, "reviewer.tool"), get(doc, "reviewer.model")
+    if empty(rtool) or rtool is KeyError:
+        probs.append("reviewer.tool is empty")
+    if empty(rmodel) or rmodel is KeyError:
+        probs.append("reviewer.model is empty")
+    elif str(rmodel).strip().lower() not in NOT_DISPLAYED and (
+            str(rmodel).strip().lower() in BARE_TOOL_NAMES or not re.search(r"\d", str(rmodel))):
+        probs.append("reviewer.model %r is a tool name - give the exact model, or: not displayed" % rmodel)
+    if get(doc, "reviewer.same_model_as_builder") not in ("yes", "no"):
+        probs.append("reviewer.same_model_as_builder must be yes or no")
     start = get(doc, "project.starting_point")
     if start not in STARTS:
-        probs.append("project.starting_point must be week-08 or week-07")
+        probs.append("project.starting_point must be week-10 or week-08")
     base = get(doc, "project.baseline_commit")
     if empty(base) or base is KeyError or not SHORT_SHA.match(str(base)):
         probs.append("project.baseline_commit must be the checkpoint hash from Part 0")
@@ -262,13 +273,23 @@ def validate(doc, folder):
     vm = re.search(r"(\d+\.\d+(?:\.\d+)?)", vit) if isinstance(vit, str) else None
     if not vm:
         probs.append("project.vitest must be the version from the RUN line, e.g. 3.2.4")
+    if get(doc, "feature.adapter") not in ADAPTERS:
+        probs.append("feature.adapter must be one of: " + " | ".join(ADAPTERS))
+    if as_int(get(doc, "feature.timeout_ms")) is None:
+        probs.append("feature.timeout_ms must be a whole number of milliseconds")
+    chosen = get(doc, "feature.prompt_chosen")
+    if chosen not in ("A", "B", "C"):
+        probs.append("feature.prompt_chosen must be A, B or C")
+    elif measured.get("prompt_chosen") and chosen != measured["prompt_chosen"]:
+        probs.append("feature.prompt_chosen says %s, lab-report.md 5.4 says %s" % (chosen, measured["prompt_chosen"]))
     rep.add("D7", "FAIL" if probs else "PASS",
-            "; ".join(probs) if probs else "%s, %s, %s, Vitest %s" % (env, start, lang, vm.group(1)))
+            "; ".join(probs) if probs else "%s, %s, %s, Vitest %s, %s adapter" % (
+                env, start, lang, vm.group(1), get(doc, "feature.adapter")))
 
     # D8-D9
     nums = {k: as_int(get(doc, "checker." + k)) for k in ("pass", "fail", "error")}
     if now is None:
-        rep.add("D8", "ERROR", "tests/check_audit.py could not be run - is it next to this file, unedited?")
+        rep.add("D8", "ERROR", "tests/check_feature.py could not be run - is it next to this file, unedited?")
         rep.add("D9", "ERROR", "no checker run to compare with")
     elif any(v is None for v in nums.values()):
         rep.add("D8", "FAIL", "checker.pass / fail / error must all be whole numbers")
@@ -314,12 +335,13 @@ def validate(doc, folder):
 
     # D12
     probs = []
+    base = measured.get("baseline_run") or {}
     final = measured.get("final_run") or {}
-    pairs = (("claims_challenged", measured.get("claims_challenged")),
-             ("risks_registered", measured.get("risks_registered")),
-             ("risks_confirmed", measured.get("risks_confirmed")),
+    pairs = (("tests_baseline", base.get("total") if base else None),
              ("tests_final", final.get("total") if final else None),
-             ("agents_lines_changed", measured.get("agents_lines_changed")))
+             ("cases_run", measured.get("cases_run")),
+             ("findings_verified", measured.get("findings_verified")),
+             ("findings_confirmed", measured.get("findings_confirmed")))
     for key, found in pairs:
         value = as_int(get(doc, "counts." + key))
         if value is None:
@@ -330,24 +352,18 @@ def validate(doc, folder):
 
     # D13
     probs = []
-    level = as_int(get(doc, "audit.level"))
-    if level not in (0, 1, 2, 3):
-        probs.append("audit.level must be 0, 1, 2 or 3")
-    elif measured.get("level_declared") is not None and level != measured["level_declared"]:
-        probs.append("audit.level says %d, lab-report.md 5.2 says %d" % (level, measured["level_declared"]))
-    for key, found in (("top_two", measured.get("top_two")), ("mitigated", measured.get("mitigated"))):
-        value = get(doc, "decision." + key)
-        if not isinstance(value, list) or len(value) != 2:
-            probs.append("decision.%s must be a list of two risk IDs, e.g. [R2, R4]" % key)
-        elif found and [str(v) for v in value] != list(found):
-            probs.append("decision.%s says %s, lab-report.md says %s" % (key, [str(v) for v in value], list(found)))
-    release = get(doc, "decision.release")
-    if release not in RELEASES:
-        probs.append("decision.release must be one of: " + " | ".join(RELEASES))
-    elif measured.get("release") and release != measured["release"]:
-        probs.append("decision.release says %s, lab-report.md 10 says %s" % (release, measured["release"]))
+    value, found = get(doc, "decision.fixed"), measured.get("fixed")
+    if not isinstance(value, list) or len(value) != 2:
+        probs.append("decision.fixed must be a list of two finding IDs, e.g. [V1, V2]")
+    elif found and [str(v) for v in value] != list(found):
+        probs.append("decision.fixed says %s, lab-report.md 8.1-8.2 says %s" % ([str(v) for v in value], list(found)))
+    ready = get(doc, "decision.demo_ready")
+    if ready not in ("yes", "no"):
+        probs.append("decision.demo_ready must be yes or no")
+    elif measured.get("demo_ready") and ready != measured["demo_ready"]:
+        probs.append("decision.demo_ready says %s, lab-report.md 8.4 says %s" % (ready, measured["demo_ready"]))
     rep.add("D13", "FAIL" if probs else "PASS", "; ".join(probs) if probs
-            else "Level %s, %s" % (level, release))
+            else "fixed %s, demo ready: %s" % (", ".join(str(v) for v in value), ready))
 
     # D14
     findings = get(doc, "review_findings")
@@ -356,8 +372,8 @@ def validate(doc, folder):
     ok = len(findings) >= 3 and not weak
     rep.add("D14", "PASS" if ok else "FAIL",
             "%d review findings" % len(findings) if ok
-            else "review_findings needs 3 or more lines, each naming a risk ID, a constraint (C1-C6), "
-                 "an AC, a readiness row or a file (found %d, %d too thin)" % (len(findings), len(weak)))
+            else "review_findings needs 3 or more lines, each naming a finding ID (V1), a test case (E1-E9), "
+                 "a criterion (F1-F5, AC1-AC6), a reason code or a file (found %d, %d too thin)" % (len(findings), len(weak)))
 
     # D15
     missing = [k for k in HONESTY if get(doc, "honesty." + k) not in ("yes", "no")]
@@ -370,7 +386,7 @@ def validate(doc, folder):
 
 
 def print_human(rep, path):
-    print("Week 10 submission.yml - shape only, never quality   (%s)\n" % path)
+    print("Week 11 submission.yml - shape only, never quality   (%s)\n" % path)
     width = max(len(r["title"]) for r in rep.rows)
     for r in rep.rows:
         print(("%-6s %-4s %-*s  %s" % (r["verdict"], r["id"], width, r["title"], r["message"])).rstrip())
@@ -380,17 +396,17 @@ def print_human(rep, path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate week-10/submission.yml")
+    parser = argparse.ArgumentParser(description="Validate week-11/submission.yml")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--file", default="submission.yml")
     args = parser.parse_args()
 
     if args.file == "submission.yml" and not os.path.exists("submission.yml") and not os.path.isdir("tests"):
-        msg = "run this from inside your week-10/ folder:  cd week-10 && python tests/validate_submission.py"
+        msg = "run this from inside your week-11/ folder:  cd week-11 && python tests/validate_submission.py"
         print(json.dumps({"ok": False, "error": msg}) if args.json else "ERROR: " + msg)
         return 3
     if not os.path.exists(args.file):
-        msg = "%s not found - copy it from the week-10 folder you were given" % args.file
+        msg = "%s not found - copy it from the week-11 folder you were given" % args.file
         print(json.dumps({"ok": False, "error": msg}) if args.json else "ERROR: " + msg)
         return 2
     try:
@@ -419,7 +435,8 @@ def main():
                 "model": val("assistant.model"),
                 "environment": val("assistant.environment"),
                 "project": val("project"),
-                "audit": val("audit"),
+                "reviewer": val("reviewer"),
+                "feature": val("feature"),
                 "decision": val("decision"),
                 "commit": val("checker.commit"),
                 "checker": {k: as_int(val("checker." + k)) for k in ("pass", "fail", "error")},
