@@ -92,4 +92,11 @@ describe('canBook', () => {
       error: 'The end time must be after the start time.',
     });
   });
+
+  test('R2 AC1: a non-finite time reports a clear invalid-time error', () => {
+    expect(booking.evaluateAvailability({ ...fixture(), start: Number.NaN, end: 600 })).toEqual({
+      result: null,
+      error: 'The start and end times must be valid numbers.',
+    });
+  });
 });
