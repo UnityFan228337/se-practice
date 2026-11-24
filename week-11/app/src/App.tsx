@@ -57,7 +57,9 @@ export default function App() {
           isAvailable: availability.result,
           reasonCode,
         },
-        mockAdapter,
+        new URLSearchParams(window.location.search).get('simulateFailure') === '1'
+          ? async () => { throw new Error('Simulated explanation failure'); }
+          : mockAdapter,
         1500,
       );
       setExplanation(response.explanation);

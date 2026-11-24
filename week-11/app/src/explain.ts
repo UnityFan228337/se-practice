@@ -39,9 +39,20 @@ const fallbackText: Record<AvailabilityReason, string> = {
   overlap: 'The room is unavailable because the request overlaps an existing booking.',
 };
 
-export function fallbackExplanation(input: ExplainInput): string {
-  const prefix = input.roomLabel.trim();
-  return `${fallbackText[input.reasonCode]} Room: ${prefix}.`;
+export function fallbackExplanation(input: unknown): string {
+  if (!input || typeof input !== 'object') return 'The availability decision is unchanged. An explanation fallback is shown.';
+  const candidate = input as Partial<ExplainInput>;
+  const prefix = typeof candidate.roomLabel === 'string' ? candidate.roomLabel.trim() : '';
+  let reason = candidate.reasonCode && reasonCodes.has(candidate.reasonCode)
+    ? fallbackText[candidate.reasonCode]
+    : 'The availability decision is unchanged.';
+  if (candidate.isAvailable === false && candidate.reasonCode === 'available') {
+    reason = 'The room is unavailable because the deterministic result and reason code conflict.';
+  }
+  if (candidate.isAvailable === true && candidate.reasonCode && candidate.reasonCode !== 'available') {
+    reason = 'The room is available for the requested time.';
+  }
+  return prefix ? `${reason} Room: ${prefix}.` : `${reason} An explanation fallback is shown.`;
 }
 
 export const mockAdapter: ExplainAdapter = async (input) => {
@@ -53,12 +64,17 @@ export const mockAdapter: ExplainAdapter = async (input) => {
 };
 
 function validateInput(input: ExplainInput): string | null {
-  if (!input || typeof input.roomLabel !== 'string') return 'Invalid room label.';
+  if (!input || typeof input !== 'object') return 'Invalid input.';
+  if (typeof input.roomLabel !== 'string') return 'Invalid room label.';
   const label = input.roomLabel.trim();
   if (label.length < 1 || label.length > 60) return 'Invalid room label.';
   if (!TIME_PATTERN.test(input.start) || (!TIME_PATTERN.test(input.end) && input.end !== '24:00')) return 'Invalid time.';
   if (typeof input.isAvailable !== 'boolean') return 'Invalid availability.';
   if (!reasonCodes.has(input.reasonCode)) return 'Invalid reason code.';
+  const reasonMatchesStatus =
+    (input.isAvailable && input.reasonCode === 'available') ||
+    (!input.isAvailable && input.reasonCode !== 'available');
+  if (!reasonMatchesStatus) return 'Conflicting availability status.';
   return null;
 }
 
@@ -80,7 +96,7 @@ function validateOutput(input: ExplainInput, output: unknown): output is { expla
   if (input.isAvailable && (!hasAvailable || hasUnavailable)) return false;
   if (!input.isAvailable && (!hasUnavailable || hasAvailable)) return false;
 
-  const times = text.match(/\b([01]\d|2[0-3]):[0-5]\d\b/g) ?? [];
+  const times = text.match(/\b(?:([01]\d|2[0-3]):[0-5]\d|24:00)\b/g) ?? [];
   const requested = new Set([input.start, input.end]);
   if (times.some((time) => !requested.has(time))) return false;
   return true;

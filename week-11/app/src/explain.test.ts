@@ -47,7 +47,7 @@ describe('explainAvailability', () => {
   test('E6 empty input: an empty room label uses a safe fallback', async () => {
     const input = { ...base, roomLabel: '' };
     const result = await explainAvailability(input, mockAdapter, 100);
-    expect(result.explanation).toContain('Room');
+    expect(result.explanation).toContain('room');
   });
 
   test('E7 long input: labels over 60 characters are rejected', async () => {
@@ -68,5 +68,17 @@ describe('explainAvailability', () => {
     };
     const result = await explainAvailability(base, failingAdapter, 100);
     expect(result.explanation).toContain('available');
+  });
+
+  test('V1 malformed input: null room label does not throw', async () => {
+    const input = { ...base, roomLabel: null } as unknown as ExplainInput;
+    const result = await explainAvailability(input, mockAdapter, 100);
+    expect(result.explanation).not.toBe('');
+  });
+
+  test('V2 conflicting status: contradictory reason code is rejected', async () => {
+    const input = { ...base, isAvailable: false, reasonCode: 'available' as const };
+    const result = await explainAvailability(input, mockAdapter, 100);
+    expect(result.explanation).not.toContain('is available');
   });
 });

@@ -1,37 +1,29 @@
-# AI Usage Disclosure — Week 11
-
-Required by the course academic policy (Generative AI use level **D — AI-integrated**).
-You are responsible for the accuracy, testing and integrity of everything you submit,
-including anything an AI tool produced.
+# AI Usage Disclosure - Week 11
 
 | Tool | Exact model / plan | Used for | Which files it touched |
 | --- | --- | --- | --- |
-| | | the feature: mock adapter, explain.ts, the button (Task 3) | |
-| | | the three prompts compared (Task 4) | none — a fresh chat per prompt |
-| | | read-only agentic review (Task 6) | none — "Do not edit files" |
-| | | the two fixes (Task 7) | |
+| GitHub Copilot in VS Code | not displayed | feature, mock adapter, explain.ts, button and tests | booking.ts, explain.ts, explain.test.ts, App.tsx, index.css |
+| GitHub Copilot in VS Code | not displayed | three prompt variants and the comparison | none |
+| VS Code code-review agent | not displayed | read-only agentic review | none |
+| GitHub Copilot in VS Code | not displayed | the V1 and V2 fixes | explain.ts, explain.test.ts |
 
-**Every file the assistant changed in Task 3 was reviewed by me before I accepted it (§4.2):** yes / no
-<!-- Name anything you accepted without reading. -->
+**Every file the assistant changed in Task 3 was reviewed by me before I accepted it (§4.2):** yes
 
-**No API key, token or provider call is anywhere in `app/src/`:** yes / no
+**No API key, token or provider call is anywhere in `app/src/`:** yes
 
 **The review in Task 6 ran in a mode where the assistant could not edit, and `git status` showed no
-change afterwards:** yes / no
-<!-- If it edited anything, say what and how you undid it. -->
+change afterwards:** yes
 
-**I labelled every finding in §7.3 after verifying it myself:** yes / no
+**I labelled every finding in §7.3 after verifying it myself:** yes
 
-**I used another assistant as well (to explain an error, to draft text in lab-report.md, …):** yes / no
-<!-- If "yes": which one, the exact model, and for which section. -->
+**I used another assistant as well (to explain an error, to draft text in lab-report.md, …):** no
 
-**Every terminal output in lab-report.md was pasted from a real run, unedited:** yes / no
+**Every terminal output in lab-report.md was pasted from a real run, unedited:** yes
 
 **I can explain how explainAvailability handles a timeout and a contradicting answer, without the
-assistant:** yes / no
+assistant:** yes
 
-**Anything I accepted from the AI without fully understanding it:**
-<!-- Name the file and the part. An honest entry here costs far less than a blank one that turns out to be untrue. -->
+**Anything I accepted from the AI without fully understanding it:** none
 
-Signed: <your name>
-Date:
+Signed: Maltsev Yaroslav
+Date: 24 November 2026
